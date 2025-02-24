@@ -1,0 +1,7 @@
+![plot 1](Graph1.jpg)
+![plot 2](Graph2.jpg)
+![plot 3](Graph3.jpg)
+![plot 4](Graph4.jpg)
+![plot 5](Graph5.jpg)
+![plot 6](Graph6.jpg)
+![plot 7](Graph7.jpg)

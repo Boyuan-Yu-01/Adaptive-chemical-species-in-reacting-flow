@@ -1,0 +1,158 @@
+'''This programme is established to process the data from the json file(s) under the directory 'trained_NN_result'. 
+Main taskes include:    1. plot the training and validation loss
+                        2. plot the species concentration using selected NN model
+NB: The time data is in log scale'''
+
+# Import libries
+import json
+import torch
+import torch.nn as nn
+import matplotlib.pyplot as plt
+import numpy as np
+import sys
+
+#############################################################
+##        Edit input parameters from bash script           ##
+#############################################################
+dir_json = 'result_logt_json/'                             ## 
+dir_plot = 'result_logt_plot/'                             ##             
+input_json = sys.argv[1]                                   ##               
+plot_0 = sys.argv[2]                                       ##       
+plot_1 = sys.argv[3]                                       ##
+plot_title = sys.argv[4]                                   ##
+#############################################################
+
+######################
+## define functions ##
+######################
+class FCN_reconstructed(nn.Module):
+    '''This class helps to reconstruct the FCN model from a dictionary.
+    This class contains methods to forward pass the model and calculate the NN prediction given the input data.'''
+    
+    def __init__(self,model, last_activation = None):
+        super(FCN_reconstructed, self).__init__()
+        # Attributes of the model
+        self.epoch = model["epoch"]  # Fetch 'epoch' from the dictionary
+        self.params = model["params"]  # Fetch 'params' from the dictionary
+        self.min_train_loss = model["min_train_loss"]  # Fetch 'min_train_loss'
+        self.min_validate_loss = model["min_validate_loss"]  # Fetch 'min_validate_loss'
+        self.activation = nn.Tanh()
+        if last_activation:
+            self.last_layer_activation = last_activation
+        else:
+            self.last_layer_activation = self.activation
+        self.linears = nn.ModuleList()
+        layer_sizes = []
+        layer_names = sorted([key for key in self.params.keys() if "weight" in key], key=lambda x: int(x.split(".")[1]))  # Extracts correct layer index
+
+        for layer in layer_names:
+            weight_matrix = self.params[layer]
+            input_size = len(weight_matrix[0])
+            output_size = len(weight_matrix)
+            layer_sizes.append((input_size, output_size))
+        
+        for input_size,output_size in layer_sizes:
+            self.linears.append(nn.Linear(input_size, output_size))
+        
+    
+    def forward(self, T): ## x should be a n by 1 tensor. Output is a n by 3 tensor
+        ABC = torch.empty((0,3))
+        if torch.is_tensor(T) != True:         
+            T = torch.tensor(T, dtype=torch.float)
+        num_layers = int(len(self.params.items())/2)
+        for t in T:
+            x = t
+            for i in range(num_layers-1):
+                if torch.is_tensor(x) != True:
+                    x = torch.Tensor(x)
+                A = torch.tensor(self.params[f"linears.{i}.weight"])
+                b = torch.tensor(self.params[f"linears.{i}.bias"])
+                z = torch.matmul(A, x) + b
+                x = self.activation(z)
+            A = torch.tensor(self.params[f"linears.{num_layers-1}.weight"])
+            b = torch.tensor(self.params[f"linears.{num_layers-1}.bias"])
+            z = torch.matmul(A, x) + b
+            x = self.last_layer_activation(z)
+            x = x[None,:]
+            ABC = torch.vstack((ABC, x))
+        return ABC
+            
+    def show_info(self):
+        '''Print the information of the model'''
+        print(f"Epoch: {self.epoch}")
+        print(f"The training loss: {self.min_train_loss}")
+        print(f"The validation loss: {self.min_validate_loss}")
+        
+def load_json(directory, file_name):
+    '''Load the json file and return the training loss, validation loss, epoch and models'''
+    # Load the json file
+    with open(directory+file_name, "r") as file:
+        data = json.load(file)
+        train_loss = data['train_loss']
+        train_loss = np.array(train_loss)
+        validate_loss = data['validate_loss']
+        validate_loss = np.array(validate_loss)
+        models = data['NN_parameters']
+        epoch = [i * 100 for i in range(len(train_loss))]
+        epoch = np.array(epoch)
+        train_loss = train_loss.reshape(-1, 1)
+        validate_loss = validate_loss.reshape(-1, 1)
+        epoch = epoch.reshape(-1, 1)
+    return train_loss, validate_loss, epoch, models
+    
+def reconstruct_NN(model, last_activation = None):
+    ''' This function reconstruct the FCN model from the model, a dictionary as illustrated in 
+    "PINN_ROBER_readMe", dic_one.
+    This function returns an object that is an instance of the class FCN_reconstructed.'''
+    params = model["params"]
+    state_dict = {key:torch.tensor(value, dtype=torch.float) for key, value in params.items()} 
+    NN = FCN_reconstructed(model, last_activation)
+    NN.load_state_dict(state_dict)   
+    return NN
+
+def plot_log_loss(array, legends=None, title='plot',plot_save=False):
+    '''Plot a dataset with a logarithmic y-scale. arrays is a n by 3 numpy array, where n is he number of data points.'''
+    plt.figure(figsize=(16, 12))
+    x, y1, y2 = array[:, 0], array[:, 1], array[:, 2]
+    label1 = legends[0] if legends else f"(y1)"
+    label2 = legends[1] if legends else f"(y2)"
+    plt.plot(x, y1, 'b-', label=label1)
+    plt.plot(x, y2, 'r--', label=label2)
+    plt.yscale("log")  # Set y-axis to log scale
+    plt.xlabel("epoches")
+    plt.ylabel("loss")
+    plt.legend()
+    plt.grid(True, which="both", linestyle="--", linewidth=0.5)
+    plt.title(title)
+    plt.savefig(plot_save)
+    # plt.show()
+    plt.close()
+
+def plot_concentration(T, concentration, legend, title, plot_save=False):
+    '''Plot the concentration of the species using the NN model
+        x-axis is in log scale'''
+    plt.figure(figsize=(16, 12))
+    plt.plot(T, concentration)
+    plt.legend(legend, loc="upper right")
+    plt.xlabel("Time[s]")
+    plt.xscale("log")
+    plt.ylabel("Concentration")
+    plt.title(title)
+    plt.savefig(plot_save)
+    # plt.show()
+    plt.close()
+
+tl, vl, ep, md =  load_json(dir_json, input_json) # call the function to load the json file
+
+NN = reconstruct_NN(md[-1], last_activation=nn.Softplus()) # reconstruct the NN model from the last model in the list
+# print(NN.show_info()) # print the information of the model
+plot_log_loss(np.hstack((ep, tl, vl)), legends=[("train loss"), ("validation loss")], title = plot_title, plot_save=dir_plot+plot_0)
+
+## given time, get the concentration of the species using "forward" method
+log_T = torch.linspace(-5, 4, 1000)[:, None].reshape(-1,1)
+T = 10**log_T
+ABC = NN.forward(log_T)
+ABC = ABC.detach().numpy()
+plot_concentration(T, ABC, legend=["[A]","[B]","[C]"], title="Species Concentration"+plot_title, plot_save=dir_plot+plot_1)
+print("The plots are saved.")
+

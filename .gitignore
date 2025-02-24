@@ -1,0 +1,19 @@
+# Ignored directories
+flame/code/flame_objects/
+flame/Stanford_fls/temp_full/
+flame/Stanford_fls/temp_skeletal/
+ROBER/result_logt_json/
+ROBER/result_t_json/
+Tianfeng_Lu/drg_tutorial/
+
+# Ignored files
+flame/Stanford_fls/methane_flame_speed.xlsx
+flame/Stanford_fls/methane_fls.csv
+flame/Stanford_fls/methane_fls_skeletal.csv
+GNN/GRL_Book.pdf
+
+# Ignored .csv & .xlsx files
+*.csv
+*.xlsx
+*.json
+*.qti
