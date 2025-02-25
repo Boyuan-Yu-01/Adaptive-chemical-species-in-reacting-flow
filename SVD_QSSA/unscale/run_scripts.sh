@@ -24,4 +24,39 @@
 
 # timeStep = 0.0001
 echo "timeStep = 0.0001"
-python unscale_ROBER.py 0.0001 unscale_00001.csv True
+# python unscale_ROBER.py 0.000001 unscale_ini.csv 1 100000 NaN
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 5 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 3 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 3 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 3 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 3 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 3 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 3 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 3 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 3 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 3 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 3 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 3 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 3 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 3 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 3 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 3 True
+python unscale_ROBER.py 0.0001 unscale_00001.csv 100 3 True

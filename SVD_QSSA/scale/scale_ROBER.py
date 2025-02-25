@@ -2,6 +2,26 @@ import numpy as np
 import sys
 from tqdm import tqdm
 import pandas as pd
+import warnings
+
+# function
+def progress_reaction(x_initial, t_start, A, timeStep, t_interval=50, save_points=1):
+    # reaction progression of the ROBER problem
+    x = x_initial.copy()
+    t = np.arange(t_start+timeStep, t_interval+t_start+timeStep, timeStep)
+    for i in tqdm(range(1,len(t))):   # reaction pregressions
+        reaction = [[x[0,i-1]],[x[1,i-1]*x[2,i-1]],[x[1,i-1]**2]]
+        delta_x = np.dot(A, reaction) * timeStep
+        if np.min(x[:, i-1] + delta_x[:, 0])<0:
+            warnings.warn('Concentration values are negative. Take zero instead.')
+        new_x = np.maximum(x[:, i-1] + delta_x[:, 0], 0)
+        x = np.hstack((x, new_x[:, None]))
+        if np.max(x[:, i]) > 1e3:
+            sys.exit('Concentration values are too high. Exiting...')
+    data = np.hstack((t[:,None], x.T))
+    indices = np.linspace(0, data.shape[0]-1, num=save_points, dtype=int)
+    data = data[indices]
+    return data
 
 ## edit input parameters from bash script
 # timeStep = float(sys.argv[1])
@@ -21,36 +41,20 @@ gamma = 8064.0
 coefs = np.array([alpha, beta, gamma])
 
 ## Construct A_prime
-D1 = [[alpha,0,0],[0,beta,0],[0,0,gamma]]
-D2 = [[1/alpha, 0, 0],[0, 1/(beta*gamma), 0],[0, 0, 1/beta**2]]
-A_prime = np.dot(D1,np.dot(A,D2))
-val, vec = np.linalg.eig(A_prime)
+spec_trans = [1/alpha, 1/beta, 1/gamma] 
+spec_trans = np.diag(spec_trans)
+reac_trans = [1/alpha, 1/(beta * gamma), 1/(beta * beta)]
+reac_trans = np.diag(reac_trans)
+A_prime = np.dot(np.linalg.inv(spec_trans), np.dot(A, reac_trans))
+print(np.linalg.eigvals(A_prime))
 
-## Define the initial conditions 
-species_0 = np.array([[1.0], [1e-6], [1e-6]])
-species_0_prime = np.array([[1.0*alpha], [1e-6*beta], [1e-6*gamma]])
-# species_0_prime = np.array([[1.0*alpha], [0*beta], [0*gamma]])
 
-## Define time series & initialise the solution vector
-t = np.arange(0,5*10e4, timeStep)
-x = species_0[:,0].copy()[:,None]
-x_prime = species_0_prime[:,0].copy()[:,None]
 
-## Reaction Progression
-for i in tqdm(range(1,len(t))):
-    reaction = [[x_prime[0,i-1]],[x_prime[1,i-1]*x_prime[2,i-1]],[x_prime[1,i-1]**2]]  # CALCULATION PROCEEDS WITHIN SCALED DOMAIN.
-    delta_x_prime = np.dot(A_prime, reaction) * timeStep
-    new_x_prime = np.maximum(x_prime[:, i-1] + delta_x_prime[:, 0], 0)  # ensure non-negative values
-    new_x = new_x_prime * np.reciprocal(coefs)  # scale back to real domain
-    x_prime = np.hstack((x_prime, new_x_prime[:, None]))
-    x = np.hstack((x, new_x[:, None]))
-    if max(new_x) > 1e3:
-        sys.exit('Concentration values are too high. Exiting...')
 
-## save the results to a csv file
-t = t[:,None]
-data = np.hstack((t, x.T))
-indices = np.linspace(0, data.shape[0]-1, num=300, dtype=int)
-data = data[indices]
-df = pd.DataFrame(data, columns=['time', '[A]', '[B]', '[C]'])
-df.to_csv('output.csv', index=False)
+# ## save the results to a csv file
+# t = t[:,None]
+# data = np.hstack((t, x.T))
+# indices = np.linspace(0, data.shape[0]-1, num=300, dtype=int)
+# data = data[indices]
+# df = pd.DataFrame(data, columns=['time', '[A]', '[B]', '[C]'])
+# df.to_csv('output.csv', index=False)

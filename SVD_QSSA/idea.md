@@ -92,6 +92,7 @@ $$
 \end{equation}
 $$
 We can __tune__ $\alpha$, $\beta$, and $\gamma$ s.t. eigenvalues can be comparable and therefore the simulation can be conducted in a more accurate/fast way.
+__The eigenvalues of this matrix is__: $0, \frac{\gamma}{\beta^2}k_2, and -k_1-\frac{k_3}{\gamma}$
 
 
 ## Questions associate with this method ##
