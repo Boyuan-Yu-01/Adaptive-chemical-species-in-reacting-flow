@@ -12,12 +12,8 @@ def progress_reaction(x_initial, t_start, A, timeStep, t_interval=50, save_point
     for i in tqdm(range(1,len(t))):   # reaction pregressions
         reaction = [[x[0,i-1]],[x[1,i-1]*x[2,i-1]],[x[1,i-1]**2]]
         delta_x = np.dot(A, reaction) * timeStep
-        if np.min(x[:, i-1] + delta_x[:, 0])<0:
-            warnings.warn('Concentration values are negative. Take zero instead.')
         new_x = np.maximum(x[:, i-1] + delta_x[:, 0], 0)
         x = np.hstack((x, new_x[:, None]))
-        if np.max(x[:, i]) > 1e3:
-            sys.exit('Concentration values are too high. Exiting...')
     data = np.hstack((t[:,None], x.T))
     indices = np.linspace(0, data.shape[0]-1, num=save_points, dtype=int)
     data = data[indices]
@@ -26,18 +22,43 @@ def progress_reaction(x_initial, t_start, A, timeStep, t_interval=50, save_point
 ## edit input parameters from bash script
 # timeStep = float(sys.argv[1])
 # output = sys.argv[2]
-timeStep = 0.0001 # for testing
+# timeStep = 0.0001 # for testing
+timeStep = 0.0001
 
 ## Define the reaction coefficients and reaction matrix
 k1 = 0.04
 k2 = 3e7
 k3 = 1e4
 A = [[-k1, k3, 0],[k1, -k3, -k2],[0, 0, k2]]
-alpha = 1e-3
+
+# alpha = 1
+# beta = 1
+# gamma = 1
+## Scale by maximum concentration
+# alpha = 1
 # beta = 4e5
 # gamma = 1
-beta = 448998.89
-gamma = 8064.0
+# # abs(lambda) = 1.01
+# alpha = 1
+# beta = 5.3187e+05
+# gamma = 9.5238e+03
+## abs(lambda) = 1.2
+# alpha = 1
+# beta = 448998.89
+# gamma = 8064.0
+## abs(lambda) = 0.8
+alpha = 1
+beta = 6.6815e+05
+gamma = 1.1905e+04
+# abs(lambda) = 0.8
+# alpha = 1
+# beta = 5.3709e+05
+# gamma = -9.6154e+03
+# # abs(lambda) = 10
+# alpha = 1
+# beta = 5.4663e+04
+# gamma = -996.0159
+
 coefs = np.array([alpha, beta, gamma])
 
 ## Construct A_prime
@@ -48,6 +69,16 @@ reac_trans = np.diag(reac_trans)
 A_prime = np.dot(np.linalg.inv(spec_trans), np.dot(A, reac_trans))
 print(np.linalg.eigvals(A_prime))
 
+## Define the initial species concentrations
+species_0 = np.array([[1.0], [0.0], [0.0]])
+t_start = 0
+data = progress_reaction(species_0, t_start, A, timeStep, 25, 100)
+data[:,1] = data[:,1] / alpha
+data[:,2] = data[:,2] / beta
+data[:,3] = data[:,3] / gamma
+df = pd.DataFrame(data, columns=['time', '[A]', '[B]', '[C]'])
+df.to_csv('output.csv', index=False)
+print(df)
 
 
 

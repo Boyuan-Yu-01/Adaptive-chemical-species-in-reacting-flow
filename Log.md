@@ -128,7 +128,7 @@ __PINN ROBER PROBLEM__
 	- Problem 2: penalize over-training by adding a loss term
 	- Problem 3: another physical constraint: law of mass action
 another side of PINN: use PINN to predict the QSS species
-	- Use gradient,second gradient chemistry, etc. as references to predict the QSS species
+	eqn1 = y/x^2 *- Use gradient,second gradient chemistry, etc. as references to predict the QSS species
 
 __SVD REACTION MATRIX FOR QSSA PREDICTION__ [Link](/SVD_QSSA/idea.md)
 
@@ -143,3 +143,4 @@ __SVD REACTION MATRIX FOR QSSA PREDICTION__ [Link](/SVD_QSSA/idea.md)
 | SVD Idea                                                      | - [introduction](/SVD_QSSA/idea.md)<br>- [No go to directly solve it](/SVD_QSSA/unscale/readme.md)                                                                                                                                                  |
 | Direct Solve                                                  | - [concentration of A and C](/SVD_QSSA/unscale/A_C.jpg)<br>- [concentration of B](/SVD_QSSA/unscale/B.jpg)                                                                                                                                          |
 | Immersion Cooling (Two-phase)                                 | -[US-20250063686-A1](https://ppubs.uspto.gov/dirsearch-public/print/downloadBasicPdf/20250063686?requestToken=eyJzdWIiOiIyNDQ3MTM3YS1jODljLTQzNTktOTRhYS1lN2M0OTViZTNmZGMiLCJ2ZXIiOiI3ZWFlYmE0MS03ODcwLTQ1OGQtOTUzOS0xZjY2MDBiYmUxZjkiLCJleHAiOjB9) |
+![plot](temp.png)
