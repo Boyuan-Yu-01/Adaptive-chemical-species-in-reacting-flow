@@ -151,7 +151,7 @@ __SVD REACTION MATRIX FOR QSSA PREDICTION__ [Link](/SVD_QSSA/idea.md)
 | ------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
 | Obtain the analytical solution to the ROBER problem by assuming species B is in QSS                     | - [steps](/SVD_QSSA/QSSA_B_analytical.pdf)      |
 | Try to implement QSSA at different time steps by implementing the analytical solutions                  | - [summary](/SVD_QSSA/unscale/plots/summary.md) |
-| Try to implement the "scale by the current concentration" and see how eigenvalue and eigenvectors works | - [summary](Scaled_eigen_analysis.pdf)          |
+| Try to implement the "scale by the current concentration" and see how eigenvalue and eigenvectors works | - [summary](SVD_QSSA/Scaled_eigen_analysis.pdf) |
 
 
 
