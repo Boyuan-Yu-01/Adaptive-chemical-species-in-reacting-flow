@@ -141,6 +141,20 @@ __SVD REACTION MATRIX FOR QSSA PREDICTION__ [Link](/SVD_QSSA/idea.md)
 | Compare the fls using reduced skeletal species and full model | - [plots](flame/Stanford_fls/sim_exp/allPlots.md)                                                                                                                                                                                                   |
 | Directly Solve ROBER Problem                                  | - [code](/SVD_QSSA/unscale/unscale_ROBER.py)                                                                                                                                                                                                        |
 | SVD Idea                                                      | - [introduction](/SVD_QSSA/idea.md)<br>- [No go to directly solve it](/SVD_QSSA/unscale/readme.md)                                                                                                                                                  |
-| Direct Solve                                                  | - [concentration of A and C](/SVD_QSSA/unscale/A_C.jpg)<br>- [concentration of B](/SVD_QSSA/unscale/B.jpg)                                                                                                                                          |
+| Direct Solve                                                  | - [concentration of A and C](/SVD_QSSA/unscale/plots/A_C.jpg)<br>- [concentration of B](/SVD_QSSA/unscale/plots/B.jpg)                                                                                                                              |
 | Immersion Cooling (Two-phase)                                 | -[US-20250063686-A1](https://ppubs.uspto.gov/dirsearch-public/print/downloadBasicPdf/20250063686?requestToken=eyJzdWIiOiIyNDQ3MTM3YS1jODljLTQzNTktOTRhYS1lN2M0OTViZTNmZGMiLCJ2ZXIiOiI3ZWFlYmE0MS03ODcwLTQ1OGQtOTUzOS0xZjY2MDBiYmUxZjkiLCJleHAiOjB9) |
-![plot](temp.png)
+
+# Feb.  3rd
+## <span style="color: red;">Done List</span> ##
+
+| Object                                                                                                  | Specification                                   |
+| ------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Obtain the analytical solution to the ROBER problem by assuming species B is in QSS                     | - [steps](/SVD_QSSA/QSSA_B_analytical.pdf)      |
+| Try to implement QSSA at different time steps by implementing the analytical solutions                  | - [summary](/SVD_QSSA/unscale/plots/summary.md) |
+| Try to implement the "scale by the current concentration" and see how eigenvalue and eigenvectors works | - [summary](Scaled_eigen_analysis.pdf)          |
+
+
+
+
+
+
