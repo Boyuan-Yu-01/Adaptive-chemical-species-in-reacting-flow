@@ -28,6 +28,7 @@ ana_6 = pd.read_csv('QSSA_ana_6.csv')
 ana_7 = pd.read_csv('QSSA_ana_7.csv')
 ana_8 = pd.read_csv('QSSA_ana_8.csv')
 ana_9 = pd.read_csv('QSSA_ana_9.csv')
+ana_10 = pd.read_csv('QSSA_ana_10.csv')
 
 do0 = orig_0.values # original data
 do1 = orig_1.values
@@ -40,6 +41,7 @@ da6 = ana_6.values
 da7 = ana_7.values
 da8 = ana_8.values
 da9 = ana_9.values
+da10 = ana_10.values
 
 
-plot(do, da9, 500)
+plot(do, da6, 100)
