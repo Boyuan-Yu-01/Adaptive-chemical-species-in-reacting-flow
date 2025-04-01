@@ -144,7 +144,7 @@ __SVD REACTION MATRIX FOR QSSA PREDICTION__ [Link](/SVD_QSSA/idea.md)
 | Direct Solve                                                  | - [concentration of A and C](/SVD_QSSA/unscale/plots/A_C.jpg)<br>- [concentration of B](/SVD_QSSA/unscale/plots/B.jpg)                                                                                                                              |
 | Immersion Cooling (Two-phase)                                 | -[US-20250063686-A1](https://ppubs.uspto.gov/dirsearch-public/print/downloadBasicPdf/20250063686?requestToken=eyJzdWIiOiIyNDQ3MTM3YS1jODljLTQzNTktOTRhYS1lN2M0OTViZTNmZGMiLCJ2ZXIiOiI3ZWFlYmE0MS03ODcwLTQ1OGQtOTUzOS0xZjY2MDBiYmUxZjkiLCJleHAiOjB9) |
 
-# Feb.  3rd
+# Feb.  25th
 ## <span style="color: red;">Done List</span> ##
 
 | Object                                                                                                  | Specification                                                                    |
@@ -153,8 +153,20 @@ __SVD REACTION MATRIX FOR QSSA PREDICTION__ [Link](/SVD_QSSA/idea.md)
 | Try to implement QSSA at different time steps by implementing the analytical solutions                  | - [summary](/SVD_QSSA/unscale/plots/summary.md)                                  |
 | Try to implement the "scale by the current concentration" and see how eigenvalue and eigenvectors works | - [summary](SVD_QSSA/Scaled_eigen_analysis.pdf)                                  |
 
+# Mar.  4th, 11th, 18th, and 25th
+*Conference, spring break, and mid-term*
 
+# Apr. 1st #
 
-
-
+## <span style="color: red;">Done List</span> ##
+| Object                                                                                                 | Specification                     |
+| ------------------------------------------------------------------------------------------------------ | --------------------------------- |
+| Stanford [CS224W](https://www.youtube.com/watch?v=JAB_plj2rbA&list=PLoROMvodv4rPLKxIpqhjhPgdQy7imNkDn) | 22/60                             |
+| Discrete Analysis of the ROBER problem and extensions                                                  | [details](/SVD_QSSA/discrete.pdf) |
+## To Do List for Apr. 8th 
+| Object                                                                | Specification                                                 |
+| --------------------------------------------------------------------- | ------------------------------------------------------------- |
+| understand how to use CVODE to solve PDEs                             | [webpage](https://computing.llnl.gov/projects/sundials/cvode) |
+| Try implement policies proposed in the [file](/SVD_QSSA/discrete.pdf) |                                                               |
+| Stanford CS 224W (2/3)                                                |                                                               |
 
