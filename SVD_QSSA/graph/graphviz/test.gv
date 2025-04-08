@@ -61,7 +61,7 @@ k7->{OH,M}		# reaction 7
 {H2O,M}->k8			# reaction 8
 k8->{H,OH,M}		# reaction 8
 
-{H2O,H2O}->k9			# reaction 9
+H2O->k9[label=2][color="red"]	#reaction 9
 k9->{H,OH,H2O}		# reaction 9
 
 {H,O2,M}->k10			# reaction 10

@@ -3,11 +3,25 @@ import cantera as ct
 import pandas as pd
 import numpy as np
 import re
+from collections import defaultdict
+
 scheme_path = "/home/boyuan-yu/Documents/USC/research/log/SVD_QSSA/graph"
 plot_path = "/home/boyuan-yu/Documents/USC/research/log/SVD_QSSA/graph/graphviz"
 scheme = scheme_path+"/"+"FFCM1_skeletal.yaml"
 plot_name = "skeletal.gv"
 
+def remove_duplicates(spec, cnt):
+    '''This function removes the duplicates from the list of species and add duplicated corresponding coefficients'''
+    combined = defaultdict(int)
+    for spec, cnt in zip(spec,cnt):
+        combined[spec] += cnt
+        
+    # convert the defaultdict back to 2 lists
+    spec = list(combined.keys())
+    cnt = list(combined.values())
+    
+    return spec, cnt
+        
 def extract_species(reaction):
     '''This function extracts the species from the reaction expressed in string'''
     reaction = reaction.replace("(", "").replace(")", "")
@@ -38,7 +52,10 @@ def extract_species(reaction):
             prod_coef.append(num)
         else:
             prod_coef.append(1)
-            
+    
+    # remove duplicates from reac and prod and sum the coefficients
+    reac, reac_coef = remove_duplicates(reac, reac_coef)
+    prod, prod_coef = remove_duplicates(prod, prod_coef)
     return reac, prod, reac_coef, prod_coef
 
 def reaction_in_graph_statement(reac, prod, reac_coef, prod_coef, i):

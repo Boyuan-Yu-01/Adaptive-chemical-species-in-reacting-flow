@@ -134,7 +134,7 @@ k8->{OH,M}		# reaction 8
 {H2O,M}->k9			# reaction 9
 k9->{H,OH,M}		# reaction 9
 
-{H2O,H2O}->k10			# reaction 10
+H2O->k10[label=2][color="red"]	#reaction 10
 k10->{H,OH,H2O}		# reaction 10
 
 {H,O2,M}->k11			# reaction 11
