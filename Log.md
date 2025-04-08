@@ -170,3 +170,12 @@ __SVD REACTION MATRIX FOR QSSA PREDICTION__ [Link](/SVD_QSSA/idea.md)
 | Try implement policies proposed in the [file](/SVD_QSSA/discrete.pdf) |                                                               |
 | Stanford CS 224W (2/3)                                                |                                                               |
 
+# Apr. 8th
+## <span style="color: red;">Done List & Questions</span> ##
+##
+| Object                               | Specification                                                                                                                                                                                                                                                                       |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| .cti to .yaml                        | - reaction 2 & 3<br>- reaction 8 & 9<br>- reaction 33 & 34<br>- (duplicate reaction, meaning of (+M))                                                                                                                                                                               |
+| code converting scheme to graph      | - [code](/SVD_QSSA/graph/model_state.py)<br>-- prerequisite: download [graphviz](https://graphviz.gitlab.io/)<br>-- generating graph: dot -Tpng script.gv -o graph.png<br>- [skeletal](/SVD_QSSA/graph/graphviz/skeletal.png)<br>- [12 species](SVD_QSSA/graph/graphviz/12_mod.png) |
+| a very exciting paper                | - [link](https://pubs.acs.org/doi/pdf/10.1021/j100103a028)                                                                                                                                                                                                                          |
+| mass conservation when applying QSSA | - discuss during the meeting                                                                                                                                                                                                                                                        |

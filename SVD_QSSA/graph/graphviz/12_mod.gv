@@ -1,0 +1,149 @@
+digraph G {
+	k1[shape=square, style=filled]
+	k2[shape=square, style=filled]
+	# k3[shape=square, style=filled]
+	k4[shape=square, style=filled]
+	k5[shape=square, style=filled]
+	k6[shape=square, style=filled]
+	k7[shape=square, style=filled]
+	k8[shape=square, style=filled]
+	k9[shape=square, style=filled]
+	k10[shape=square, style=filled]
+	k11[shape=square, style=filled]
+	k12[shape=square, style=filled]
+	k13[shape=square, style=filled]
+	k14[shape=square, style=filled]
+	k15[shape=square, style=filled]
+	# k16[shape=square, style=filled]
+	k17[shape=square, style=filled]
+	k18[shape=square, style=filled]
+	k19[shape=square, style=filled]
+	k20[shape=square, style=filled]
+	k21[shape=square, style=filled]
+	k22[shape=square, style=filled]
+	k23[shape=square, style=filled]
+	k24[shape=square, style=filled]
+	k25[shape=square, style=filled]
+	k26[shape=square, style=filled]
+	k27[shape=square, style=filled]
+	k28[shape=square, style=filled]
+	k29[shape=square, style=filled]
+	k30[shape=square, style=filled]
+	k31[shape=square, style=filled]
+	k32[shape=square, style=filled]
+	k33[shape=square, style=filled]
+	k34[shape=square, style=filled]
+	k35[shape=square, style=filled]
+	k36[shape=square, style=filled]
+	k37[shape=square, style=filled]
+	k38[shape=square, style=filled]
+	
+	{H,O2}->k1		# reaction 1
+	k1->{O,OH}
+	
+	{O,H2}->k2		# reaction 2 & 3
+	k2->{H,OH}
+	
+	{OH, H2}->k4		# reaction 4
+	k4->{H,H2O}
+	
+	OH->k5 [label="2"][color="red"]	# reaction 5
+	k5->{O,H2O}
+	
+	{H2,M}->k6		# reaction 6
+	k6->M
+	k6->H [label="2"][color="red"]
+	
+	{O,H,M}->k7		# reaction 7
+	k7->{OH,M}
+	
+	{H2O,M}->k8		# reaction 8
+	k8->{H,OH,M}
+	
+	H2O->k9 [label="2"][color="red"]	# reaction 9
+	k9->{H,OH,H2O}
+	
+	{H, O2, M}->k10		# reaction 10
+	k10->{HO2,M}
+	
+	{HO2,H}->k11		# reaction 11
+	k11->{H2,O2}
+	
+	{HO2,H}->k12		# reaction 12
+	k12->OH [label="2"][color="red"]
+	
+	{HO2,H}->k13		# reaction 13
+	k13->{O,H2O}	
+	
+	{HO2,O}->k14		# reaction 14
+	k14->{OH,O2}
+	
+	{HO2,OH}->k15		# reaction 15 & 16
+	k15->{H2O,O2}
+	
+	{CO,O,M}->k17		# reaction 17
+	k17->{CO2,M}
+	
+	{CO,O2}->k18		# reaction 18
+	k18->{O,CO2}
+	
+	{CO,OH}->k19		# reaction 19
+	k19->{H,CO2}
+	
+	{CO,OH}->k20		# reaction 20
+	k20->{H,CO2}
+	
+	{CO, HO2}->k21		# reaction 21
+	k21->{OH,CO2}
+	
+	{CH4,H}->k22		# reaction 22
+	k22->{CH3,H2}
+	
+	{CH4,O}->k23		# reaction 23
+	k23->{OH,CH3}		
+	
+	{CH4,OH}->k24		# reaction 24
+	k24->{CH3,H2O}
+	
+	{CH3,H,M}->k25		# reaction 25
+	k25->{CH4,M}
+	
+	{CH3,O}->k26		# reaction 26
+	k26->{H,CH2O}
+	
+	{CH3,O}->k27		# reaction 27
+	k27->{H,H2,CO}
+	
+	{CH3,HO2}->k28		# reaction 28
+	k28->{O2,CH4}
+	
+	{CH3,HO2}->k29		# reaction 29
+	k29->{OH,CH2O,H}
+	
+	{CH3,O2}->k30		# reaction 30
+	k30->{O,CH2O,H}
+	
+	{CH3,O2}->k31		# reaction 31
+	k31->{OH,CH2O}
+	
+	{CH3,CH2O}->k32		# reaction 32
+	k32->{H,CO,CH4}
+	
+	{CH2O,M}->k33		# reaction 33
+	k33->{H2,CO,M}
+		
+	{CH2O,H}->k34		# reaction 34
+	k34->{H2,CO,H}
+	
+	{CH2O,H}->k35		# reaction 35
+	k35->{H2,CO,H}
+	
+	{CH2O,O}->k36		# reaction 36
+	k36->{OH,H,CO}
+	
+	{CH2O,OH}->k37		# reaction 37
+	k37->{H,CO,H2O}
+	
+	{CH2O,O2}->k38		# reaction 38
+	k38->{HO2,H,CO}
+}
