@@ -11,7 +11,7 @@
 ->-> reltor_A and reltor_B: relative tolerance, calculated by $|[B_{QSSA}]-[B]|/[B]$
 
 
-![plot](SVD_QSSA/BDF_QSSA/ROBER_2e4/plots/reltor_QSSA_time.jpg)
-![p](SVD_QSSA/BDF_QSSA/ROBER_2e4/plots/reltor_threshold.jpg)
-![p](SVD_QSSA/BDF_QSSA/ROBER_2e4/plots/threshold_QSSA_start_time.jpg)
+![plot](ROBER_2e4/plots/reltor_QSSA_time.jpg)
+![p](ROBER_2e4/plots/reltor_threshold.jpg)
+![p](ROBER_2e4/plots/threshold_QSSA_start_time.jpg)
 
