@@ -4,11 +4,11 @@
 - Two mechanisms are used for comparison: __"FFCM1_21.yaml"__  and __"FFCMy_12_modified.yaml"__ 
 
 ## Reaction using 12 species vs 21 species mechanism
-![p](SVD_QSSA/BDF_QSSA/12_species/plots/MJ_12.jpg)
-![p](SVD_QSSA/BDF_QSSA/12_species/plots/MJ_21.jpg)
+![p](plots/MJ_12.jpg)
+![p](plots/MJ_21.jpg)
 
 
-![p](SVD_QSSA/BDF_QSSA/12_species/plots/MNI_12.jpg)
-![p](SVD_QSSA/BDF_QSSA/12_species/plots/MNI_21.jpg)
-![p](SVD_QSSA/BDF_QSSA/12_species/plots/MNII_12.jpg)
-![p](SVD_QSSA/BDF_QSSA/12_species/plots/MNII_21.jpg)
+![p](plots/MNI_12.jpg)
+![p](plots/MNI_21.jpg)
+![p](plots/MNII_12.jpg)
+![p](plots/MNII_21.jpg)
