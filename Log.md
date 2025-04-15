@@ -164,11 +164,11 @@ __SVD REACTION MATRIX FOR QSSA PREDICTION__ [Link](/SVD_QSSA/idea.md)
 | Stanford [CS224W](https://www.youtube.com/watch?v=JAB_plj2rbA&list=PLoROMvodv4rPLKxIpqhjhPgdQy7imNkDn) | 22/60                             |
 | Discrete Analysis of the ROBER problem and extensions                                                  | [details](/SVD_QSSA/discrete.pdf) |
 ## To Do List for Apr. 8th 
-| Object                                                                | Specification                                                 |
-| --------------------------------------------------------------------- | ------------------------------------------------------------- |
-| understand how to use CVODE to solve PDEs                             | [webpage](https://computing.llnl.gov/projects/sundials/cvode) |
-| Try implement policies proposed in the [file](/SVD_QSSA/discrete.pdf) |                                                               |
-| Stanford CS 224W (2/3)                                                |                                                               |
+| Object                                    | Specification                                                 |
+| ----------------------------------------- | ------------------------------------------------------------- |
+| understand how to use CVODE to solve PDEs | [webpage](https://computing.llnl.gov/projects/sundials/cvode) |
+| Try implement policies proposed in the    | [file](/SVD_QSSA/discrete.pdf)                                |
+| Stanford CS 224W (2/3)                    |                                                               |
 
 # Apr. 8th
 ## <span style="color: red;">Done List & Questions</span> ##
@@ -179,3 +179,14 @@ __SVD REACTION MATRIX FOR QSSA PREDICTION__ [Link](/SVD_QSSA/idea.md)
 | code converting scheme to graph      | - [code](/SVD_QSSA/graph/model_state.py)<br>-- prerequisite: download [graphviz](https://graphviz.gitlab.io/)<br>-- generating graph: dot -Tpng script.gv -o graph.png<br>- [skeletal](/SVD_QSSA/graph/graphviz/skeletal.png)<br>- [12 species](SVD_QSSA/graph/graphviz/12_mod.png) |
 | a very exciting paper                | - [link](https://pubs.acs.org/doi/pdf/10.1021/j100103a028)                                                                                                                                                                                                                          |
 | mass conservation when applying QSSA | - discuss during the meeting                                                                                                                                                                                                                                                        |
+|                                      |                                                                                                                                                                                                                                                                                     |
+
+# Apr. 15th #
+
+## <span style="color: red;">Done List</span> ##
+
+| Object                                                                             | Specification                                                                                                                                                                                                                                        |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| directly solve ROBER problem using BDF                                             | - BDF solving ROBER problem: 2.96s<br>- [readme](/SVD_QSSA/BDF_QSSA/README.md)                                                                                                                                                                       |
+| Code up a solver for constant TP reaction using BDF. It reqires scheme as an input | - [dictionary structure](SVD_QSSA/BDF_QSSA/12_species/mech_structure.md)<br>- [code (contains a class)](/SVD_QSSA/BDF_QSSA/12_species/constant_TP_reaction.py)<br>- [constant TP using 21 species and 12 species reduced model](model_comparison.md) |
+|                                                                                    |                                                                                                                                                                                                                                                      |
