@@ -1,19 +1,20 @@
 '''This script convert POLLU problem into a dictionary'''
+'''Updated version: consider constant # of molecules (for const. T, this means const. P)'''
 import cantera as ct
 import pandas as pd
 import numpy as np
-import json
 from scipy.integrate import solve_ivp
-# scheme = "FFCMy_12_modified.yaml"
-scheme = "FFCM1_21.yaml"
+scheme = "FFCM2.yaml"
 
 class constant_TP_reaction:
     """Use BDF to solve the constant TP reaction problem given a mechanism"""
     
     def __init__(self, mechanism):
         self.mechanism = mechanism
+        self.n0 = None                 # evaluate n0 in get_initial_condition
         self.IC = None                  # evaluate IC in get_initial_condition
-        self.solution = None            # evaluate solution in reaction_progress
+        self.reac_history = None            # evaluate solution in reaction_progress
+        
         
     def build_mechanism(scheme, T, P, X):
         """Build the mechanism given the scheme, T, P, X for the constant TP reaction."""
@@ -83,11 +84,11 @@ class constant_TP_reaction:
        
     def get_initial_condition(self, X0, P0):
         """This function plug initial conditions into the mechanism dictionary"""
-        n0 = P0/ (ct.gas_constant * T)  # number of moles per unit volume
+        self.n0 = P0/ (ct.gas_constant * T)  # number of moles per unit volume
         X0_dict = {k.strip(): float(v.strip()) for k, v in (item.split(":") for item in X0.split(","))}
         X_sum = sum(X0_dict.values())
         for key, value in X0_dict.items():
-            value = value / X_sum * n0
+            value = value / X_sum * self.n0
             X0_dict[key] = value
             
         for key in X0_dict.keys():
@@ -107,6 +108,7 @@ class constant_TP_reaction:
         def chemical_reaction(t, y, species_dict):
             """This function defines the chemical reaction rate from species_dict"""
             sys_eqns = []
+            mol_var = 0   # the net production of the molecule at this time step
             species_list = list(species_dict.keys())
             for species in species_dict.keys():   # i is the ith species
                 func_i = 0
@@ -117,20 +119,52 @@ class constant_TP_reaction:
                         func_j *= y[index] ** species_dict[species]["net_reaction_rate"][3][j][k]
                     func_i += func_j
                 sys_eqns.append(func_i)
+                mol_var += func_i * t_step
+            # reduce proportionally the net production of the molecule
+            for i, eqn in enumerate(sys_eqns):
+                eqn -= mol_var * (y[i]/self.n0)
             return sys_eqns        
         sol = solve_ivp(fun=lambda t, y: chemical_reaction(t, y, species_dict), t_span=t_span, y0=self.IC, t_eval=t_eval, method=metod)
-        self.solution = sol
+        self.reac_history = sol
         return sol
+    
+    def get_reaction_history(self, basis="concentration"):
+        """This function returns the reaction history: basis decides if it is in concentration or mole fraction"""
+        if basis == "concentration":
+            return self.reac_history
+        elif basis == "mole_frac":
+            sol = np.array(self.reac_history.y)
+            for i in range(sol.shape[1]):
+                sum = 0
+                for j in range(sol.shape[0]):
+                    sum += sol[j][i]
+                sol[:,i] /= sum
+            return sol
     
     def get_species_list(self):
         """This function returns the species list"""
         return list(self.mechanism["species"].keys())
     
+    def write_to_csv(self, filename, basis="concentration", save_every=10000):
+        """This function writes the reaction history to a csv file"""
+        if basis == "concentration":
+            data = np.vstack((self.reac_history.t, self.reac_history.y))
+            header = ['t'] + self.get_species_list()
+        elif basis == "mole_frac":
+            X_history = self.get_reaction_history(basis="mole_frac")
+            data = np.vstack([self.reac_history.t, X_history])
+            modified_species_header = ['X_' + item for item in self.get_species_list()]
+            header = ['t'] + modified_species_header
+        data = data.T
+        data = pd.DataFrame(data, columns=header)
+        data = data.iloc[::save_every]
+        data.to_csv(filename, index=False)
+    
 ## use cantera to load mechanism from a .yaml file
 gas = ct.Solution(scheme)
 T = 2000            # K
 P = 1 * ct.one_atm  # 1 atm
-X = "CH4:1, O2: 2"  # stoichiometric mixture (x does not matter. It is only here to complete
+X = "C2H6:1, O2: 2"  # stoichiometric mixture (x does not matter. It is only here to complete
                     # gas initialization s.t. we can get reaction rate out of it.)
                     
                     
@@ -140,19 +174,16 @@ obj.get_initial_condition(X0=X, P0=P)
 # species = list(obj.mechanism["species"].keys())
 # index = species.index(obj.mechanism["species"]["H2"]["net_reaction_rate"][2][0][1])
 # print(index)
-
-# # save the mechanism into a json file
-# with open("methane_oxygen_12.json","r") as f:
-#     json.dump(mechanism, f, indent=4)
-    
-    
 solution = obj.reaction_progress(t_span=(0, 0.002), t_step=1e-9)
 
-data = np.vstack((solution.t,solution.y))
-data = data.T
-data = pd.DataFrame(data, columns=['t'] + obj.get_species_list())
-data = data.iloc[::10000]
-# data.to_csv("test_21.csv", index=False)
+
+# save the mole fraction into a csv file
+obj.write_to_csv("ver_2_X.csv", basis="mole_frac")
+# data = np.vstack((solution.t,solution.y))
+# data = data.T
+# data = pd.DataFrame(data, columns=['t'] + obj.get_species_list())
+# data = data.iloc[::10000]
+# data.to_csv("H20_ver_2.csv", index=False)
 
 
 

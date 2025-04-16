@@ -5,7 +5,7 @@ import numpy as np
 import json
 from scipy.integrate import solve_ivp
 # scheme = "FFCMy_12_modified.yaml"
-scheme = "FFCM1_21.yaml"
+scheme = "FFCM2.yaml"
 
 class constant_TP_reaction:
     """Use BDF to solve the constant TP reaction problem given a mechanism"""
@@ -130,7 +130,7 @@ class constant_TP_reaction:
 gas = ct.Solution(scheme)
 T = 2000            # K
 P = 1 * ct.one_atm  # 1 atm
-X = "CH4:1, O2: 2"  # stoichiometric mixture (x does not matter. It is only here to complete
+X = "C2H6:1, O2: 2"  # stoichiometric mixture (x does not matter. It is only here to complete
                     # gas initialization s.t. we can get reaction rate out of it.)
                     
                     
@@ -152,7 +152,7 @@ data = np.vstack((solution.t,solution.y))
 data = data.T
 data = pd.DataFrame(data, columns=['t'] + obj.get_species_list())
 data = data.iloc[::10000]
-# data.to_csv("test_21.csv", index=False)
+data.to_csv("ver_1.csv", index=False)
 
 
 
