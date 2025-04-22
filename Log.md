@@ -191,4 +191,14 @@ __SVD REACTION MATRIX FOR QSSA PREDICTION__ [Link](/SVD_QSSA/idea.md)
 | Code up a solver for constant TP reaction using BDF. It reqires scheme as an input | - [dictionary structure](SVD_QSSA/BDF_QSSA/12_species/mech_structure.md)<br>- [code (contains a class)](/SVD_QSSA/BDF_QSSA/12_species/constant_TP_reaction.py)<br>- [constant TP using 21 species and 12 species reduced model](SVD_QSSA/BDF_QSSA/12_species/model_comparison.md) |
 | comparison (ver1 vs ver2) (ver2 vs cantera)                                        | - [ver1vsver2](SVD_QSSA/BDF_QSSA/12_species/plots/version_comparison.jpg)<br>- [ver2vscantera](SVD_QSSA/BDF_QSSA/12_species/plots/self_vs_cantera.jpg)                                                                                                                            |
 | Updated discrete analysis                                                          | - [details](/SVD_QSSA/discrete.pdf)                                                                                                                                                                                                                                               |
-|                                                                                    |                                                                                                                                                                                                                                                                                   |
+
+# Apr. 22nd #
+## <span style="color: red;">Done List</span> ##
+
+| Object                                                                                | Specification                                                                                                                                     |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| online example of using BDF integration scheme to solve the constant pressure problem | - [Link](https://cantera.org/dev/_downloads/6a24950c616ecb6f605627b4a3648054/custom.py)                                                           |
+| Cantera Iterative numerical scheme to solve ODE                                       | - [Link](https://cantera.org/dev/reference/onedim/nonlinear-solver.html)<br>- *Numerical methods for ordinary differential equations*, Chapter 15 |
+
+
+

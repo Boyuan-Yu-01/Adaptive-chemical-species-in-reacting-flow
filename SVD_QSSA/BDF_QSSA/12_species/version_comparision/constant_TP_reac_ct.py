@@ -10,7 +10,7 @@ gas.TPX = T, P, X
 r = ct.IdealGasConstPressureReactor(contents=gas, energy='off', name="isothermal")
 sim = ct.ReactorNet([r])
 sim.verbose = True
-dt_max = 1e-5
+dt_max = 1e-8
 t_end = 0.002
 states = ct.SolutionArray(gas, extra=['t'])
 species_print = ["H", "O", "O2", "OH", "H2O", "CO", "CO2", "C2H6"]
