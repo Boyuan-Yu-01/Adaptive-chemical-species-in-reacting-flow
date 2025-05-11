@@ -200,5 +200,8 @@ __SVD REACTION MATRIX FOR QSSA PREDICTION__ [Link](/SVD_QSSA/idea.md)
 | online example of using BDF integration scheme to solve the constant pressure problem | - [Link](https://cantera.org/dev/_downloads/6a24950c616ecb6f605627b4a3648054/custom.py)                                                           |
 | Cantera Iterative numerical scheme to solve ODE                                       | - [Link](https://cantera.org/dev/reference/onedim/nonlinear-solver.html)<br>- *Numerical methods for ordinary differential equations*, Chapter 15 |
 
+# May 13th #
 
-
+| Object                                     | Specification                                                                           |
+| ------------------------------------------ | --------------------------------------------------------------------------------------- |
+| Use cantera to solve homogeneous reactions | - [README](cantera_example/README.md)<br>- [python script](cantera_example/reactors.py) |
