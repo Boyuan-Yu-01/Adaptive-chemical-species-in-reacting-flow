@@ -5,12 +5,13 @@ import numpy as np
 import pandas as pd
 
 class Reactor:
-    def __init__(self, gas, dt_max, t_end, output_file, mode=None):
+    def __init__(self, gas, dt_max, t_end, output_file, mode=None, output_format="mole_fraction"):
         self.gas = gas
         self.dt_max = dt_max
         self.t_end = t_end
         self.output_file = output_file
         self.mode = mode
+        self.output_format = output_format
         
         # dispatcher: if mode is defined, use it to select the function to call
         self.dispatch = {
@@ -41,7 +42,6 @@ class Reactor:
         sim.verbose = True
         states = ct.SolutionArray(gas)
         t = []  # initialise the time array
-        P = []  # initialise the pressure array
 
         # reaction progression w.r.t. time
         while sim.time < t_end:
@@ -49,17 +49,23 @@ class Reactor:
             # states.append(r.thermo.state, t=sim.time)
             states.append(r.thermo.state)
             t.append(sim.time)
-            P.append(r.thermo.P)
         
         # extract information that later will be put into the output file
         t = np.array(t).reshape(-1, 1)  # convert to a column vector
-        P = np.array(P).reshape(-1, 1)  # convert to a column vector
+        P = states.P.reshape(-1, 1)  # convert to a column vector
         T = states.T.reshape(-1, 1)  # convert to a column vector
         rho = states.D.reshape(-1, 1)  # convert to a column vector
         species = states.species_names
-        titles = np.hstack((['t [s]', 'P [Pa]', 'T [K]', 'rho [kg/m^3]'], species))
-        data = np.hstack((t, P, T, rho, states.X))
-        
+        if self.output_format == "mole_fraction":  
+            titles = np.hstack((['t [s]', 'P [Pa]', 'T [K]', 'rho [kg/m^3]'], species))
+            data = np.hstack((t, P, T, rho, states.X))
+        elif self.output_format == "concentration":
+            species = np.char.add(species, " [kmol/m^3]")
+            titles = np.hstack((['t [s]', 'P [Pa]', 'T [K]', 'rho [kg/m^3]'], species))
+            data = np.hstack((t, P, T, rho, states.concentrations))
+        else:
+            raise ValueError(f"Unknown output format: '{self.output_format}'")
+
         # conclude data into a pandas dataframe
         df = pd.DataFrame(data, columns=titles)
         df.to_csv(output_file, index=False)
@@ -82,25 +88,29 @@ class Reactor:
         sim.verbose = True
         states = ct.SolutionArray(gas)
         t = []  # initialise the time array
-        P = []  # initialise the pressure array
         
         # reaction progression w.r.t. time
         while sim.time < t_end:
             sim.advance(sim.time + dt_max)
-            # states.append(r.thermo.state, t=sim.time)
             states.append(r.thermo.state)
             t.append(sim.time)
-            P.append(r.thermo.P)
         
         # extract information that later will be put into the output file
         t = np.array(t).reshape(-1, 1)  # convert to a column vector
-        P = np.array(P).reshape(-1, 1)  # convert to a column vector
+        P = states.P.reshape(-1, 1)  # convert to a column vector
         T = states.T.reshape(-1, 1)  # convert to a column vector
         rho = states.D.reshape(-1, 1)  # convert to a column vector
         species = states.species_names
-        titles = np.hstack((['t [s]', 'P [Pa]', 'T [K]', 'rho [kg/m^3]'], species))
-        data = np.hstack((t, P, T, rho, states.X))
-        
+        if self.output_format == "mole_fraction":  
+            titles = np.hstack((['t [s]', 'P [Pa]', 'T [K]', 'rho [kg/m^3]'], species))
+            data = np.hstack((t, P, T, rho, states.X))
+        elif self.output_format == "concentration":
+            species = np.char.add(species, " [kmol/m^3]")
+            titles = np.hstack((['t [s]', 'P [Pa]', 'T [K]', 'rho [kg/m^3]'], species))
+            data = np.hstack((t, P, T, rho, states.concentrations))
+        else:
+            raise ValueError(f"Unknown output format: '{self.output_format}'")
+
         # conclude data into a pandas dataframe
         df = pd.DataFrame(data, columns=titles)
         df.to_csv(output_file, index=False)
@@ -123,25 +133,29 @@ class Reactor:
         sim.verbose = True
         states = ct.SolutionArray(gas)
         t = []  # initialise the time array
-        P = []  # initialise the pressure array
         
         # reaction progression w.r.t. time
         while sim.time < t_end:
             sim.advance(sim.time + dt_max)
-            # states.append(r.thermo.state, t=sim.time)
             states.append(r.thermo.state)
             t.append(sim.time)
-            P.append(r.thermo.P)
         
         # extract information that later will be put into the output file
         t = np.array(t).reshape(-1, 1)  # convert to a column vector
-        P = np.array(P).reshape(-1, 1)  # convert to a column vector
+        P = states.P.reshape(-1, 1)  # convert to a column vector
         T = states.T.reshape(-1, 1)  # convert to a column vector
         rho = states.D.reshape(-1, 1)  # convert to a column vector
         species = states.species_names
-        titles = np.hstack((['t [s]', 'P [Pa]', 'T [K]', 'rho [kg/m^3]'], species))
-        data = np.hstack((t, P, T, rho, states.X))
-        
+        if self.output_format == "mole_fraction":  
+            titles = np.hstack((['t [s]', 'P [Pa]', 'T [K]', 'rho [kg/m^3]'], species))
+            data = np.hstack((t, P, T, rho, states.X))
+        elif self.output_format == "concentration":
+            species = np.char.add(species, " [kmol/m^3]")
+            titles = np.hstack((['t [s]', 'P [Pa]', 'T [K]', 'rho [kg/m^3]'], species))
+            data = np.hstack((t, P, T, rho, states.concentrations))
+        else:
+            raise ValueError(f"Unknown output format: '{self.output_format}'")
+
         # conclude data into a pandas dataframe
         df = pd.DataFrame(data, columns=titles)
         df.to_csv(output_file, index=False)
@@ -160,13 +174,13 @@ gas.TPX = T, P, X
 dt_max = 1e-8
 t_end = 2e-3
 # t_end = 1e-7    # for testing
-output_file = "class_test.csv"
+output_file = "test_mole_fraction.csv"
 
 # run the simulation
 
 ## Method 1: 
-# sim1 = Reactor(gas=gas, dt_max=dt_max, t_end=t_end, output_file=output_file)
-# sim1.run(mode="const_vol_adia")
+sim1 = Reactor(gas=gas, dt_max=dt_max, t_end=t_end, output_file=output_file, output_format="concentration")
+sim1.run(mode="const_vol_adia")
 ## Method 2:
-sim2 = Reactor(gas=gas, dt_max=dt_max, t_end=t_end, output_file=output_file, mode="const_vol_adia")
+sim2 = Reactor(gas=gas, dt_max=dt_max, t_end=t_end, output_file=output_file, mode="const_vol_adia", output_format="mole_fraction")
 sim2.run()

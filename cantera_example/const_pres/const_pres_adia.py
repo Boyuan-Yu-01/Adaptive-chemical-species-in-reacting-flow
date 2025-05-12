@@ -13,18 +13,16 @@ def const_pres_adia(gas, dt_max, t_end, output_file):
     sim.verbose = True
     states = ct.SolutionArray(gas)
     t = []  # initialise the time array
-    P = []  # initialise the pressure array
 
     while sim.time < t_end:
         sim.advance(sim.time + dt_max)
         # states.append(r.thermo.state, t=sim.time)
         states.append(r.thermo.state)
         t.append(sim.time)
-        P.append(r.thermo.P)
     
     # extract information that later will be put into the output file
     t = np.array(t).reshape(-1, 1)  # convert to a column vector
-    P = np.array(P).reshape(-1, 1)  # convert to a column vector
+    P = states.P.reshape(-1, 1)  # convert to a column vector
     T = states.T.reshape(-1, 1)  # convert to a column vector
     rho = states.D.reshape(-1, 1)  # convert to a column vector
     species = states.species_names
