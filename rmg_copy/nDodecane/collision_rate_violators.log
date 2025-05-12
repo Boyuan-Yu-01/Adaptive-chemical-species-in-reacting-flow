@@ -1,0 +1,75 @@
+*** Collision rate limit violators report ***
+"Violation factor" is the ratio of the rate coefficient to the collision limit rate at the relevant conditions
+
+! Template reaction: Disproportionation
+! Estimated using template [CO_pri_rad;XH_s_Rrad] for rate rule [CO_pri_rad;Cmethyl_COrad]
+! Euclidian distance = 2.0
+! Multiplied by reaction path degeneracy 3.0
+! family: Disproportionation
+HCO(14)+CH3CO(35)=CH2O(19)+CH2CO(28)                5.430000e+14 0.000     0.000    
+
+Direction: forward
+Violation factor: 1.49
+Violation condition: 1350.0 K, 1.0 bar
+
+
+! Template reaction: Disproportionation
+! Estimated using template [CO_rad;XH_s_Rrad] for rate rule [CO_rad/NonDe;Cmethyl_Orad]
+! Euclidian distance = 2.8284271247461903
+! Multiplied by reaction path degeneracy 3.0
+! family: Disproportionation
+CH3O(27)+CH3CO(35)=CH2O(19)+CH3CHO(37)              5.430000e+14 0.000     0.000    
+
+Direction: forward
+Violation factor: 1.52
+Violation condition: 1350.0 K, 1.0 bar
+
+
+! Template reaction: Disproportionation
+! Estimated using template [CO_rad;XH_s_Rrad] for rate rule [CO_rad/NonDe;Cmethyl_COrad]
+! Euclidian distance = 2.8284271247461903
+! Multiplied by reaction path degeneracy 3.0
+! family: Disproportionation
+CH3CO(35)+CH3CO(35)=CH2CO(28)+CH3CHO(37)            5.430000e+14 0.000     0.000    
+
+Direction: forward
+Violation factor: 1.53
+Violation condition: 1350.0 K, 1.0 bar
+
+
+! Template reaction: Disproportionation
+! Estimated using template [CO_rad;XH_s_Rrad] for rate rule [CO_rad/NonDe;Cmethyl_Csrad]
+! Euclidian distance = 2.8284271247461903
+! Multiplied by reaction path degeneracy 3.0
+! family: Disproportionation
+CH3CO(35)+C2H5(33)=C2H4(30)+CH3CHO(37)              5.430000e+14 0.000     0.000    
+
+Direction: forward
+Violation factor: 1.35
+Violation condition: 1350.0 K, 1.0 bar
+
+
+! Template reaction: Disproportionation
+! Estimated using template [CO_rad;XH_s_Rrad] for rate rule [CO_rad/NonDe;Cmethyl_Csrad]
+! Euclidian distance = 2.8284271247461903
+! Multiplied by reaction path degeneracy 3.0
+! family: Disproportionation
+CH3CO(35)+C6H13(519)=CH3CHO(37)+C6H12(514)          5.430000e+14 0.000     0.000    
+
+Direction: forward
+Violation factor: 1.13
+Violation condition: 1350.0 K, 1.0 bar
+
+
+! Template reaction: Disproportionation
+! Estimated using template [CO_rad;XH_s_Rrad] for rate rule [CO_rad/NonDe;Cmethyl_Csrad]
+! Euclidian distance = 2.8284271247461903
+! Multiplied by reaction path degeneracy 6.0
+! family: Disproportionation
+CH3CO(35)+C3H7(160)=CH3CHO(37)+C3H6(158)            1.086000e+15 0.000     0.000    
+
+Direction: forward
+Violation factor: 2.56
+Violation condition: 1350.0 K, 1.0 bar
+
+
