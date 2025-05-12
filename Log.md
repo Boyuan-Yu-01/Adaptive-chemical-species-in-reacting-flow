@@ -202,8 +202,8 @@ __SVD REACTION MATRIX FOR QSSA PREDICTION__ [Link](/SVD_QSSA/idea.md)
 
 # May 13th #
 
-| Object                                         | Specification                                                                                                                                                                                                                                            |
-| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| RMG: n-Dodecane example                        | - [mechanism generated using FFCM I](rmg_copy/nDodecane/cantera/chem.cti)<br>- challenge using FFCM II: Programming kinetics, thermo into the RMG environment:<br>/home/boyuan-yu/anaconda3/envs/rmg_env/share/rmgdatabase/thermo/libraries/FFCM1(-).py) |
-| Use cantera to solve homogeneous reactions     | - [README](cantera_example/README.md)<br>- [python script](cantera_example/reactors.py)                                                                                                                                                                  |
-| Step 1: find dimensionless net production rate | - [code](cantera_example/mu_ranking/mu_ranking.py)                                                                                                                                                                                                       |
+| Object                                         | Specification                                                                                                                          |
+| ---------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| RMG: n-Dodecane example                        | - [mechanism generated using FFCM I](rmg_copy/nDodecane/cantera/chem.cti)<br>- challenge using FFCM II: [README](/rmg_copy/README.md)  |
+| Use cantera to solve homogeneous reactions     | - [README](cantera_example/README.md)<br>- [python script](cantera_example/reactors.py)                                                |
+| Step 1: find dimensionless net production rate | - [code](cantera_example/mu_ranking/mu_ranking.py)                                                                                     |
