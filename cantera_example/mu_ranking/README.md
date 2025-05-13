@@ -12,4 +12,7 @@ __Set 2:__ {"CH4", "CO2", "H2O", "O2", "C2H2", "OH", "H"}
 ![p](plots/set2_mu.png)
 Problem(s): 
 1. Numerical problem, especially for species that will eventually depleted:
-Concentration of $C_2H_4$ & $C_2H_6$ eventually goes to 1e19 level.
+Concentration of $C_2H_4$ & $C_2H_6$ eventually goes to 1e-19 level.
+
+# "mu_ranking_t_step.py"
+Given some time_step(s) of interest, the function __plotter__ will plot the dimensionless net production rate vs species with a descending order.
