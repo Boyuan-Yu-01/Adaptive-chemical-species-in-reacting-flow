@@ -215,5 +215,5 @@ Final exams
 ## Ongoing List
 | Object                           | Specification                                  |
 | -------------------------------- | ---------------------------------------------- |
-| Step 2: Find the Jacobian Matrix | - [code](cantera_example/Jacobian/Jacobian.py) |
+| Step 2: Find the Jacobian Matrix | - [code](cantera_example/Jacobian/jacobian.py) |
 
