@@ -5,7 +5,8 @@ from matplotlib import cm
 from matplotlib.colors import Normalize
 import numpy as np
 import pandas as pd
-scheme = "FFCM2.yaml"
+# scheme = "FFCM2.yaml"
+scheme = "FFCM1_21.yaml"
 
 def const_vol_adia(gas, dt_max, t_end):
     '''this function simulates a constant pressure homogeneous reactor with adiabatic wall
@@ -54,30 +55,27 @@ def plotter(t_array, mu, concentrations, species, t_step):
     mu_idx, concentrations_idx, species = map(np.array, zip(*combined))
     
     # Give warning message if the concentrations are effectively zero
-    danger_level = 1e-11    # this parameter needs to be tuned
+    danger_level = 1e-12    # this parameter needs to be tuned
     indicies = np.where(concentrations_idx < danger_level)[0]
     
-    # Plot and save the figure
-    # fig, ax = plt.subplots()
-    # bars = ax.bar(np.arange(len(mu_idx)), mu_idx)
-    
-    # ax.set_xticks(np.arange(len(mu_idx)))
-    # ax.set_xticklabels(species, color='black', rotation=90)
-    
-    # for idx in indicies:
-    #     ax.get_xticklabels()[idx].set_color('red')
-    
-    # plt.ylabel(r'$\mu$')
-    # plt.title(f'$\mu$ at t = {t_step:.2e} s')
-    # # plt.tight_layout()
-    # plt.savefig(f'mu_{t_step:.2e}.png')
-    # Increase spacing by scaling the x-positions
-    spacing = 1.5
-    x = np.arange(len(mu_idx)) * spacing
+    # highlight some species
+    hightlight_major = ["O2", "H2O", "CO2", "CH4"]
+    hightlight_minor = ["H", "OH", "C2H4", "C2H2", "C2H6"]
+    colours = []
+    for s in species:
+        if s in hightlight_major:
+            colours.append('red')
+        elif s in hightlight_minor:
+            colours.append('blue')
+        else:
+            colours.append('black')
 
     # Plot
-    fig, ax = plt.subplots(figsize=(20,6))
-    bars = ax.bar(x, mu_idx)
+    spacing = 1.5
+    x = np.arange(len(mu_idx)) * spacing
+    fig, ax = plt.subplots(figsize=(20,10))
+    # bars = ax.bar(x, mu_idx, edgecolor='black')
+    bars = ax.bar(x, mu_idx, color=colours, edgecolor='black')
 
     # Set custom x-ticks and labels with spacing
     ax.set_xticks(x)
@@ -89,10 +87,10 @@ def plotter(t_array, mu, concentrations, species, t_step):
 
     # Axis labels and title
     plt.ylabel(r'$\mu$')
-    plt.title(f'$\mu$ at t = {t_step:.2e} s')
+    plt.title(rf'$\mu$ at t = {t_step:.2e} s')
 
     # Save figure
-    plt.savefig(f'mu_{t_step:.2e}.png')
+    plt.savefig(f'mu_{t_step:.2e}.png', dpi=300, bbox_inches='tight')
 
 ##########################    
 # set up the gas object ##
@@ -124,6 +122,7 @@ t_2 = np.linspace(8e-6, 1.3e-5, 3)[1:]      # Some radicals seems to be formed
 t_3 = np.linspace(1.3e-5, 2.3e-5, 10)[1:]   # Reaction quickly happens
 t_4 = np.linspace(2.3e-5, 3e-5, 6)[1:]      # Nothing seems to happen
 t = np.hstack((t_1, t_2, t_3, t_4))
+
 
 for t_step in t:
     plotter(t, mu, concentrations, species, t_step)

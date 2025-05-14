@@ -200,10 +200,20 @@ __SVD REACTION MATRIX FOR QSSA PREDICTION__ [Link](/SVD_QSSA/idea.md)
 | online example of using BDF integration scheme to solve the constant pressure problem | - [Link](https://cantera.org/dev/_downloads/6a24950c616ecb6f605627b4a3648054/custom.py)                                                           |
 | Cantera Iterative numerical scheme to solve ODE                                       | - [Link](https://cantera.org/dev/reference/onedim/nonlinear-solver.html)<br>- *Numerical methods for ordinary differential equations*, Chapter 15 |
 
-# May 13th #
+# Apr. 29th & May 6th
+Final exams
+# May 14th #
 
-| Object                                         | Specification                                                                                                                         |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| RMG: n-Dodecane example                        | - [mechanism generated using FFCM I](rmg_copy/nDodecane/cantera/chem.cti)<br>- challenge using FFCM II: [README](/rmg_copy/README.md) |
-| Use cantera to solve homogeneous reactions     | - [README](cantera_example/README.md)<br>- [python script](cantera_example/reactors.py)                                               |
-| Step 1: find dimensionless net production rate | - [code](cantera_example/mu_ranking/mu_ranking.py)<br>- ranking $\mu$ [Link](cantera_example/mu_ranking/README.md)                    |
+## <span style="color: red;">Done List</span> ##
+
+| Object                                         | Specification                                                                                                                                                                       |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| RMG: n-Dodecane example                        | - [mechanism generated using FFCM I](rmg_copy/nDodecane/cantera/chem.cti)<br>- challenge using FFCM II: [README](/rmg_copy/README.md)                                               |
+| Use cantera to solve homogeneous reactions     | - [README](cantera_example/README.md)<br>- [python script](cantera_example/reactors.py)                                                                                             |
+| Step 1: Find dimensionless net production rate | - [code 1](cantera_example/mu_ranking/mu_ranking.py)<br>- [code 2](cantera_example/mu_ranking/mu_ranking_t_step.py)<br>- ranking $\mu$ [Link](cantera_example/mu_ranking/README.md) |
+
+## Ongoing List
+| Object                           | Specification                                  |
+| -------------------------------- | ---------------------------------------------- |
+| Step 2: Find the Jacobian Matrix | - [code](cantera_example/Jacobian/Jacobian.py) |
+

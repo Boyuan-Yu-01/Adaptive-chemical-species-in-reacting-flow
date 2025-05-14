@@ -5,7 +5,8 @@ from matplotlib import cm
 from matplotlib.colors import Normalize
 import numpy as np
 import pandas as pd
-scheme = "FFCM2.yaml"
+# scheme = "FFCM2.yaml"
+scheme = "FFCM1_21.yaml"
 
 def const_vol_adia(gas, dt_max, t_end):
     '''this function simulates a constant pressure homogeneous reactor with adiabatic wall
@@ -80,8 +81,8 @@ for i in range(1, len(mu)):         # we skip the INITIAL time step since t^j - 
 ######################################################################
 ## evenly choose 10 time steps, and select 9 species to plot out mu ##
 ######################################################################
-# species_interest = ["CH4", "CO2", "H2O", "O2", "C2H6", "C2H4", "C2H2", "OH", "H"]
-species_interest = ["CH4", "CO2", "H2O", "O2", "C2H2", "OH", "H"]
+species_interest = ["CH4", "CO2", "H2O", "O2", "C2H6", "C2H4", "C2H2", "OH", "H"]
+# species_interest = ["CH4", "CO2", "H2O", "O2", "C2H2", "OH", "H"]
 number_of_time_steps = 20
 column_indicies = [np.where(species == s)[0][0] for s in species_interest]     # get the indicies of the species of interest in "species"
 mu_trimmed = mu[:,column_indicies]
