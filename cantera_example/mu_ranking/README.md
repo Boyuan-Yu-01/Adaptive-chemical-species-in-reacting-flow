@@ -4,7 +4,7 @@ All files under this directory are made in attempt to:
     (iii) for each time step, rank $\frac{\frac{d[S_i]}{dt}\cdot \delta t}{[S_i]}$ 
 
 ## "mu_ranking.py"
-- In this script, I chose two sets of species, and plot there dimensionless net production rate ($\mu$.) The x axis is species name, the y axis is time, and the z axis is $\mu$.
+*In this script, I chose two sets of species, and plot there dimensionless net production rate ($\mu$.) The x axis is species name, the y axis is time, and the z axis is $\mu$.*
 
 __Set 1:__ {"CH4", "CO2", "H2O", "O2", "C2H6", "C2H4", "C2H2", "OH", "H"}
 ![p](plots/set1_mu.png)
@@ -15,7 +15,7 @@ Problem(s):
 Concentration of $C_2H_4$ & $C_2H_6$ eventually goes to 1e-19 level.
 
 # "mu_ranking_t_step.py"
-Given some time_step(s) of interest, the function __plotter__ will plot the dimensionless net production rate vs species with a descending order.
+*Given some time_step(s) of interest, the function __plotter__ will plot the dimensionless net production rate vs species with a descending order.*
 
 ## Plots from FFCM II
 
@@ -66,3 +66,10 @@ __Similar plots are made from 21 species__
 1. $CH_4$ and $O_2$ always have insignificant dimensionless net production rate
 2. $H$ also has insignificant dimensionless net production rate
 3. Between $1.4e-5$ and $1.5e-5$, some radicals spikes in dimensionless net production rate
+
+# mu_indi_species.py
+*This function plots the time varying of $\mu$ of each individual species.*
+
+![](plots/species_mu_history_FFCMII/mu_CH4.png)
+![](plots/species_mu_history_FFCMII/mu_H.png)
+![](plots/species_mu_history_FFCMII/mu_C2H2.png)
