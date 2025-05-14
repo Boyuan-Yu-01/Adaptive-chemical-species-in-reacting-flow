@@ -44,14 +44,65 @@ def const_vol_adia(gas, dt_max, t_end):
     
     return t, P, T, rho, species, net_production_rates, concentrations, X
 
-def Calculate_Jacobian(t, P, T, species, net_production_rate, concentrations, idx):
+def calculate_mu(net_production_rates, concentrations, t):
+    """This function calculate the dimensionless net production rate of each species"""
+    # get the dimensionless net production rates named "mu"
+    mu = np.zeros_like(net_production_rates)
+    for i in range(1, len(mu)):         # we skip the INITIAL time step since t^j - t^(j-1) does not exist
+        for j in range(len(species)): 
+            mu[i][j] = abs(net_production_rates[i][j] / concentrations[i][j] * (t[i] - t[i-1])) # this is the dimensionless net production rate
+            np.seterr(invalid='ignore')  # suppress warning
+    return mu
+
+    
+def Calculate_Jacobian(t, P, T, species, net_production_rate, concentrations, X, idx):
     """ This function use perturbation method to approximate the Jacobian matrix of the system."""
     
+    mu = calculate_mu(net_production_rate, concentrations, t)
     # Step 1: strip off t(i-1), P(i-1), T(i-1), X(i-1), net_production_rate(i-1), concentrations(i-1) 
     #               and t(i),   P(i),   T(i),   X(i),   net_production_rate(i),   concentrations(i), STORE EACH OF THESE INFORMATION INTO A DICTIONARY
+    gas_m1 = {  # This dictionary stors the gas information at t(i-1)
+        "t": t[idx-1],
+        "P": P[idx-1],
+        "T": T[idx-1],
+        "species": species,
+        "mu": mu[idx-1,:],
+        "concentrations": concentrations[idx-1,:],
+        "X": X[idx-1,:],
+    }
     
+    gas_1_ = {  # This dictionary stores the gas information at t(i)  
+        "t": t[idx],
+        "P": P[idx],
+        "T": T[idx],
+        "species": species,
+        "mu": mu[idx,:],
+        "concentrations": concentrations[idx,:],
+        "X": X[idx,:],
+    }
     
     # Step 2: Stack Species, X, Concentrations of the same time step together, then reorder them using the descending order of the net_production_rate(i-1)
+    MSCX_m1 = sorted(zip(gas_m1["mu"],gas_m1["species"],gas_m1["concentrations"], gas_m1["X"]), key=lambda x:x[0], reverse=True)    # mu, species, concentration, and composition
+    MSCX_1 = sorted(zip(gas_m1["mu"],gas_1_["species"],gas_1_["concentrations"], gas_1_["X"]), key=lambda x:x[0], reverse=True)    # mu, species, concentration, and composition
+    
+    _, gas_m1["species"], gas_m1["concentrations"], gas_m1["X"] = zip(*MSCX_m1)  # unpack the sorted list into the dictionary
+    _, gas_1_["species"], gas_1_["concentrations"], gas_1_["X"] = zip(*MSCX_1)  # unpack the sorted list into the dictionary
+    gas_m1.pop("mu", None)  # remove the mu from the dictionary
+    gas_1_.pop("mu", None)  # remove the mu from the dictionary
+    
+    #######################################################################################################################################################################
+    ###########################################################
+    ## test: derive the composition out of the concentration ##
+    ###########################################################
+    X_test = []
+    for i in gas_m1["concentrations"]:
+        X_test.append(i / sum(gas_m1["concentrations"]))
+    X_test = np.array(X_test)
+    
+    ## find th relative difference between X_test and gas_m1["X"]
+    diff = np.abs(X_test - gas_m1["X"]) / np.abs(gas_m1["X"])
+    print("Relative difference between X_test and gas_m1['X'] is: ", diff)
+    #######################################################################################################################################################################
     
     # Step 3: Evaluate the perturbed system evolving from t(i-1) to t(i)
         # 3.1: looping over each species, perturb its concentration, advance the system to t(i), so that we can get the perturbed CONCENTRATIONS (by perturbing S_i)
@@ -76,3 +127,5 @@ t_end = 3e-5
 
 # run the simulation 
 t, P, T, rho, species, net_production_rates, concentrations, X = const_vol_adia(gas, dt_max, t_end)
+
+Calculate_Jacobian(t, P, T, species, net_production_rates, concentrations, X, 5) # we use the first time step to calculate the Jacobian matrix
