@@ -58,6 +58,38 @@ def calculate_mu(net_production_rates, concentrations, t):
 def Calculate_Jacobian(t, P, T, species, net_production_rate, concentrations, X, idx):
     """ This function use perturbation method to approximate the Jacobian matrix of the system."""
     
+    def one_step_perturbation(gas, gas_1, species_idx, delta):
+        """This function perturbs the concentration of the species at species_idx by "delta", and advance the system by "delta t" """
+        # yield the after-perturbed physical properties (TPX):
+        T = gas["T"]    # temperature will not change
+        P = gas["P"] * (sum(gas["concentrations"])) / (sum(gas["concentrations"]) + gas["concentrations"][species_idx]*delta) # since the concentration of a species is perturbed, the pressure will change
+        X = []
+        for i in range(len(gas["concentrations"])):
+            if i == species_idx:
+                Xi = max((gas["concentrations"][species_idx]*(1+delta))/ (sum(gas["concentrations"]) + gas["concentrations"][species_idx]*delta),0)
+                X.append(Xi)
+            else:
+                Xi = max(gas["concentrations"][i] / (sum(gas["concentrations"]) + gas["concentrations"][species_idx]*delta), 0)
+                X.append(Xi)
+        
+        X = dict(zip(gas["species"], X))  # convert the list to a dictionary
+        
+        # given TPX, now we create a after-perturbed gas object
+        gas_perturb = ct.Solution(scheme)
+        gas_perturb.TPX = T, P, X
+        dt = gas_1["t"] - gas["t"]        # set up time constraints for the simulation
+        t_end = dt                        # set up time constraints for the simulation
+        _, _, _, _, _, _, concentrations_perturbed, _ = const_vol_adia(gas_perturb, dt_max, t_end)
+        # Calculate idx-th column of the Jacobian matrix
+        delta_concentration = np.array(concentrations_perturbed) - np.array(gas_1["concentrations"])
+        J_idx_col = delta_concentration / (delta * gas["concentrations"][species_idx])
+        J_idx_col = J_idx_col.reshape(-1, 1)  # reshape the column to be a column vector
+        
+        #### test: first row of concentrations_perturbed vs gas["concentrations"]
+        print(concentrations_perturbed[0,:]-gas["concentrations"])/gas["concentrations"]
+        
+        return J_idx_col
+        
     mu = calculate_mu(net_production_rate, concentrations, t)
     # Step 1: strip off t(i-1), P(i-1), T(i-1), X(i-1), net_production_rate(i-1), concentrations(i-1) 
     #               and t(i),   P(i),   T(i),   X(i),   net_production_rate(i),   concentrations(i), STORE EACH OF THESE INFORMATION INTO A DICTIONARY
@@ -90,27 +122,24 @@ def Calculate_Jacobian(t, P, T, species, net_production_rate, concentrations, X,
     gas_m1.pop("mu", None)  # remove the mu from the dictionary
     gas_1_.pop("mu", None)  # remove the mu from the dictionary
     
-    #######################################################################################################################################################################
-    ###########################################################
-    ## test: derive the composition out of the concentration ##
-    ###########################################################
-    X_test = []
-    for i in gas_m1["concentrations"]:
-        X_test.append(i / sum(gas_m1["concentrations"]))
-    X_test = np.array(X_test)
-    
-    ## find th relative difference between X_test and gas_m1["X"]
-    diff = np.abs(X_test - gas_m1["X"]) / np.abs(gas_m1["X"])
-    print("Relative difference between X_test and gas_m1['X'] is: ", diff)
-    #######################################################################################################################################################################
     
     # Step 3: Evaluate the perturbed system evolving from t(i-1) to t(i)
         # 3.1: looping over each species, perturb its concentration, advance the system to t(i), so that we can get the perturbed CONCENTRATIONS (by perturbing S_i)
         # 3.2: For each perturbed concentration, we can solve a COLUMN of the Jacobian matrix
+    Jacobian_matrix = np.empty((len(species),0))    # initialise the Jacobian matrix
+    for i in range(len(gas_m1["species"])):
+    
+        J_col = one_step_perturbation(gas_m1, gas_1_, i, 0.1)
+        
+        print(J_col.shape)
+        
+        Jacobian_matrix = np.hstack((Jacobian_matrix, J_col))  # stack the columns of the Jacobian matrix
+    
+    return Jacobian_matrix
+    
     
     # Step 4: Return the Jaconbian matrix at t[i]
     
-
 
 ##########################    
 # set up the gas object ##
@@ -128,4 +157,4 @@ t_end = 3e-5
 # run the simulation 
 t, P, T, rho, species, net_production_rates, concentrations, X = const_vol_adia(gas, dt_max, t_end)
 
-Calculate_Jacobian(t, P, T, species, net_production_rates, concentrations, X, 5) # we use the first time step to calculate the Jacobian matrix
+Jacobian_matrix = Calculate_Jacobian(t, P, T, species, net_production_rates, concentrations, X, 5)

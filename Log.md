@@ -217,3 +217,11 @@ Final exams
 | -------------------------------- | ---------------------------------------------- |
 | Step 2: Find the Jacobian Matrix | - [code](cantera_example/Jacobian/jacobian.py) |
 
+# May 19th #
+## <span style="color: red;">Done List</span> ##
+
+| Object                       | Specification                                  |
+| ---------------------------- | ---------------------------------------------- |
+| Jacobian matrix perturbation | - [README](cantera_example/Jacobian/README.md) |
+
+
