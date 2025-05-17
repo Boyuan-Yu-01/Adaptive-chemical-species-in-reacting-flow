@@ -1,7 +1,7 @@
 
 ## Using Perturbation Method to Approximate the Jacobian Matrix
 
-Element at ith row, jth column has value:
+Element at i-th row, j-th column has value:
 $$
 \frac{\partial S_i^{t}}{\partial S_j^{t-1}}
 $$
@@ -28,4 +28,4 @@ $$
 By these, we can defined a ==perturbed gas object==, execute __one step forward__, then approximate the Jacobian matrix.
 
 ## Detail Treatment
-
+Observation: when the concentration of a species is __effectively zero,__ the perturbation can have *divide by zero error*, but it is __still necessary to conduct it.__
