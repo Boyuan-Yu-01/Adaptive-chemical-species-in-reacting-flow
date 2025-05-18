@@ -40,9 +40,7 @@ Concentration of $C_2H_4$ & $C_2H_6$ eventually goes to 1e-19 level.
 ![p](plots/21_species/mu_3.00e-05.png)
 
 ## Observations:
-1. $CH_4$ and $O_2$ always have insignificant dimensionless net production rate
-2. $H$ also has insignificant dimensionless net production rate
-3. Between $1.4e-5$ and $1.5e-5$, some radicals spikes in dimensionless net production rate
+
 
 # mu_indi_species.py
 *This function plots the time varying of $\mu$ of each individual species.*
