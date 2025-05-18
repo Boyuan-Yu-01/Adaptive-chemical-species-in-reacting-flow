@@ -14,7 +14,7 @@ Notice that __perturbing each individual species helps to calculate a column in 
 ## Perturbation Method
 __Cantera__ utilises TPX to define the reaction gas. Given a constant temperature, to perturb, i.e., to increase $S_j$'s concentration by small amount ($\delta S_j$,) the pressure will be varied to:
 $$
-P_{perturbed} = \frac{n_{org}+\delta S_j}{n_{org}} \cdot P_{org}
+P_{perturbed} = \frac{n_{org}+\delta \cdot S_j}{n_{org}} \cdot P_{org}
 $$
 The composition of each species will also be changed:
 $$

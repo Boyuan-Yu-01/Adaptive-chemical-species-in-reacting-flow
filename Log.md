@@ -220,11 +220,15 @@ Final exams
 # May 19th #
 ## <span style="color: red;">Done List</span> ##
 
-| Object                                         | Specification                                                                     |
-| ---------------------------------------------- | --------------------------------------------------------------------------------- |
-| regenerate: $C_{12}H_{26}$ reaction mechanism  |                                                                                   |
-| redo: net production rate                      | - [README](cantera_example/npr_ranking/README.md)                                 |
-| add: concentration history by 21 species model | - [plots](cantera_example/const_vol_reactions_scheme_comperison/plots_summary.md) |
-| Jacobian matrix perturbation                   | - [README](cantera_example/Jacobian/README.md)                                    |
+| Object                                         | Specification                                                                                           |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| regenerate: $C_{12}H_{26}$ reaction mechanism  | - [.cti file](rmg_copy/nDodecane/chem.cti)<br>- [annotated .cti](rmg_copy/nDodecane/chem_annotated.cti) |
+| redo: net production rate                      | - [README](cantera_example/npr_ranking/README.md)                                                       |
+| add: concentration history by 21 species model | - [plots](cantera_example/const_vol_reactions_scheme_comperison/plots_summary.md)                       |
+| Jacobian matrix perturbation                   | - [README](cantera_example/Jacobian/README.md)                                                          |
 
-
+## Problems Observed and solution
+### Problem
+In revising the "mu_ranking_t_step.py" file, an error is observed. In the script, same name is used to define two variables.
+### Solution
+summarise __reactors__, __$\mu$ calculation__, and __npr calculation__ into ==class methods== instead of each individual function and scripts.
