@@ -29,3 +29,4 @@ By these, we can defined a ==perturbed gas object==, execute __one step forward_
 
 ## Detail Treatment
 Observation: when the concentration of a species is __effectively zero,__ the perturbation can have *divide by zero error*, but it is __still necessary to conduct it.__
+

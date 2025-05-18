@@ -18,30 +18,7 @@ Concentration of $C_2H_4$ & $C_2H_6$ eventually goes to 1e-19 level.
 *Given some time_step(s) of interest, the function __plotter__ will plot the dimensionless net production rate vs species with a descending order.*
 
 ## Plots from FFCM II
-
-![p](plots/mu_0.00e+00.png)
-![p](plots/mu_4.00e-06.png)
-![p](plots/mu_8.00e-06.png)
-![p](plots/mu_1.05e-05.png)
-![p](plots/mu_1.30e-05.png)
-![p](plots/mu_1.41e-05.png)
-![p](plots/mu_1.52e-05.png)
-![p](plots/mu_1.63e-05.png)
-![p](plots/mu_1.74e-05.png)
-![p](plots/mu_1.86e-05.png)
-![p](plots/mu_1.97e-05.png)
-![p](plots/mu_2.08e-05.png)
-![p](plots/mu_2.19e-05.png)
-![p](plots/mu_2.30e-05.png)
-![p](plots/mu_2.44e-05.png)
-![p](plots/mu_2.58e-05.png)
-![p](plots/mu_2.72e-05.png)
-![p](plots/mu_2.86e-05.png)
-![p](plots/mu_3.00e-05.png)
-
-__Similar plots are made from 21 species__
-
-## 21 Species
+### 21 Species
 
 ![p](plots/21_species/mu_4.00e-06.png)
 ![p](plots/21_species/mu_8.00e-06.png)

@@ -48,6 +48,9 @@ def plotter(t_array, mu, concentrations, species, t_step):
     idx = np.argmin(np.abs(t_array - t_step))   # find the index of the closest time_step in the array
     t_step = t_array[idx]                       # get the value
     
+    print(concentrations[idx,:])
+    print(species)
+    
     # Sort the mu and species arrays in the decending order of mu
     mu_idx = mu[idx,:]
     concentrations_idx = concentrations[idx,:]
@@ -90,7 +93,7 @@ def plotter(t_array, mu, concentrations, species, t_step):
     plt.title(rf'$\mu$ at t = {t_step:.2e} s')
 
     # Save figure
-    plt.savefig(f'mu_{t_step:.2e}.png', dpi=300, bbox_inches='tight')
+    # plt.savefig(f'mu_{t_step:.2e}.png', dpi=300, bbox_inches='tight')
 
 ##########################    
 # set up the gas object ##
@@ -115,15 +118,14 @@ for i in range(1, len(mu)):         # we skip the INITIAL time step since t^j - 
         mu[i][j] = abs(net_production_rates[i][j] / concentrations[i][j] * (t[i] - t[i-1])) # this is the dimensionless net production rate
         np.seterr(invalid='ignore')  # suppress warning
 
-
 ## Plot mu at the time step of interest
 t_1 = np.linspace(0, 8e-6, 3)               # Nothing seems to happen
 t_2 = np.linspace(8e-6, 1.3e-5, 3)[1:]      # Some radicals seems to be formed
 t_3 = np.linspace(1.3e-5, 2.3e-5, 10)[1:]   # Reaction quickly happens
 t_4 = np.linspace(2.3e-5, 3e-5, 6)[1:]      # Nothing seems to happen
-t = np.hstack((t_1, t_2, t_3, t_4))
+t_interested = np.hstack((t_1, t_2, t_3, t_4))
 
 
-for t_step in t:
+for t_step in t_interested:
     plotter(t, mu, concentrations, species, t_step)
     print(f"Plotting mu at t = {t_step:.2e} s")

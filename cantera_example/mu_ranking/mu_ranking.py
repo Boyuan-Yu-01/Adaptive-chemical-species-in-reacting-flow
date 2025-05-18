@@ -70,11 +70,19 @@ for i in range(1, len(mu)):         # we skip the INITIAL time step since t^j - 
 #############################
 ## output mu to a csv file ##
 #############################
-# csv_name = "mu.csv"
-# t = t.reshape(-1, 1)  # reshape t to be a column vector
-# data = np.hstack((t, mu))
-# species = np.char.add(species, "_mu")
-# headers = np.hstack(("t", species))
+csv_name = "mu_21.csv"
+t_output = t.reshape(-1, 1)  # reshape t to be a column vector
+data = np.hstack((t_output, mu))
+species_output = np.char.add(species, "_mu")
+headers = np.hstack(("t", species_output))
+df = pd.DataFrame(data, columns=headers)
+df.to_csv(csv_name, index=False)
+
+# csv_name = "const_vol_adia_21_species.csv"
+# t_output = t.reshape(-1, 1)  # reshape t to be a column vector
+# data = np.hstack((t_output, concentrations))
+# species_output = np.char.add(species, "_[kmol/m^3]")
+# headers = np.hstack(("t", species_output))
 # df = pd.DataFrame(data, columns=headers)
 # df.to_csv(csv_name, index=False)
 

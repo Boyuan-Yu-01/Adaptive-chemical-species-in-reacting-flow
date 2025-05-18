@@ -220,8 +220,11 @@ Final exams
 # May 19th #
 ## <span style="color: red;">Done List</span> ##
 
-| Object                       | Specification                                  |
-| ---------------------------- | ---------------------------------------------- |
-| Jacobian matrix perturbation | - [README](cantera_example/Jacobian/README.md) |
+| Object                                         | Specification                                                                     |
+| ---------------------------------------------- | --------------------------------------------------------------------------------- |
+| regenerate: $C_{12}H_{26}$ reaction mechanism  |                                                                                   |
+| redo: net production rate                      | - [README](cantera_example/npr_ranking/README.md)                                 |
+| add: concentration history by 21 species model | - [plots](cantera_example/const_vol_reactions_scheme_comperison/plots_summary.md) |
+| Jacobian matrix perturbation                   | - [README](cantera_example/Jacobian/README.md)                                    |
 
 

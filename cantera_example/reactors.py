@@ -164,6 +164,7 @@ class Reactor:
     
 # set up the gas object
 scheme = "FFCM2.yaml"
+# scheme = "FFCM1_21.yaml"
 gas = ct.Solution(scheme)
 T = 2000
 P = 1 * ct.one_atm
@@ -172,9 +173,9 @@ gas.TPX = T, P, X
 
 # set up the t constraints for the simulation and output file
 dt_max = 1e-8
-t_end = 2e-3
+t_end = 3e-5
 # t_end = 1e-7    # for testing
-output_file = "test_mole_fraction.csv"
+output_file = "const_vol_full.csv"
 
 # run the simulation
 
@@ -182,5 +183,5 @@ output_file = "test_mole_fraction.csv"
 sim1 = Reactor(gas=gas, dt_max=dt_max, t_end=t_end, output_file=output_file, output_format="concentration")
 sim1.run(mode="const_vol_adia")
 ## Method 2:
-sim2 = Reactor(gas=gas, dt_max=dt_max, t_end=t_end, output_file=output_file, mode="const_vol_adia", output_format="mole_fraction")
-sim2.run()
+# sim2 = Reactor(gas=gas, dt_max=dt_max, t_end=t_end, output_file=output_file, mode="const_vol_adia", output_format="mole_fraction")
+# sim2.run()

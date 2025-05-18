@@ -3,7 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-scheme = "FFCM2.yaml"
+# scheme = "FFCM2.yaml"
+scheme = "FFCM1_21.yaml"
 
 def const_vol_adia(gas, dt_max, t_end, output_file):
     '''this function simulates a constant pressure homogeneous reactor with adiabatic wall
@@ -47,7 +48,7 @@ gas.TPX = T, P, X
 dt_max = 1e-8
 t_end = 2e-3
 # t_end = 1e-7    # for testing
-output_file = "const_vol_adia_exp.csv"
+output_file = "const_vol_adia_21_species.csv"
 
 # run the simulation 
 states = const_vol_adia(gas, dt_max, t_end, output_file)
