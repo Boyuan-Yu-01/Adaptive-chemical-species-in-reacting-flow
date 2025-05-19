@@ -18,7 +18,7 @@ P_{perturbed} = \frac{n_{org}+\delta \cdot S_j}{n_{org}} \cdot P_{org}
 $$
 The composition of each species will also be changed:
 $$
-X_{-i} =
+X_{i}^{\prime} =
 \begin{cases}
 \displaystyle \frac{S_i}{\sum_{k=1}^m S_k + \delta S_j}, & i \ne j \\[1.5ex]
 \displaystyle \frac{(1 + \delta) S_j}{\sum_{k=1}^m S_k + \delta S_j}, & i = j
@@ -27,6 +27,21 @@ $$
 
 By these, we can defined a ==perturbed gas object==, execute __one step forward__, then approximate the Jacobian matrix.
 
-## Detail Treatment
+## Detail Treatment: Extremely small concentration
 Observation: when the concentration of a species is __effectively zero,__ the perturbation can have *divide by zero error*, but it is __still necessary to conduct it.__
 
+The typical machine error (or machine epsilon) is ~$2.22 \times 10^{-16}.$ Therefore, for any species that has concentration less than $1 \times 10^{-16},$ the perturbation will no longer follow rules above. 
+
+Instead:
+$$
+P_{perturbed} = \frac{n_{org}+\eta}{n_{org}} \cdot P_{org}
+$$
+$$
+X_{i}^{\prime} =
+\begin{cases}
+\displaystyle \frac{S_i}{\sum_{k=1}^m S_k + \eta}, & i \ne j \\[1.5ex]
+\displaystyle \frac{S_j+\eta}{\sum_{k=1}^m S_k + \eta}, & i = j
+\end{cases}
+$$
+where,
+$$\eta = 1 \times 10^{-16}$$

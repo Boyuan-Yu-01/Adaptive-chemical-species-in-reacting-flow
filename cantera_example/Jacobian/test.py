@@ -64,7 +64,7 @@ t, P, T, rho, species, net_production_rates, concentrations, X = const_vol_adia(
 ## test: perturb the gas object ##
 ###################################
 
-idx = 500
+idx = 2540
 gas_m1 = {  # This dictionary stors the gas information at t(i-1)
         "t": t[idx-1],
         "P": P[idx-1],
@@ -85,17 +85,23 @@ gas_1 = {  # This dictionary stores the gas information at t(i)
 
 # perturb gas_m1 object
 delta = 0.1
-species_idx = 2
+species_idx = 5  # the index of the species to be perturbed
 T_perturb = gas_m1["T"]    # temperature will not change
 P_perturb = gas_m1["P"] * (sum(gas_m1["concentrations"])) / (sum(gas_m1["concentrations"]) + gas_m1["concentrations"][species_idx]*delta) # since the concentration of a species is perturbed, the pressure will change
+
 X = []
 for i in range(len(gas_m1["concentrations"])):
     if i == species_idx:
-        Xi = max((gas_m1["concentrations"][species_idx]*(1+delta))/ (sum(gas_m1["concentrations"]) + gas_m1["concentrations"][species_idx]*delta),0)
+        # Xi = max((gas_m1["concentrations"][species_idx]*(1+delta))/ (sum(gas_m1["concentrations"]) + gas_m1["concentrations"][species_idx]*delta),0)
+        Xi = (gas_m1["concentrations"][species_idx]*(1+delta))/ (sum(gas_m1["concentrations"]) + gas_m1["concentrations"][species_idx]*delta)
         X.append(Xi)
     else:
-        Xi = max(gas_m1["concentrations"][i] / (sum(gas_m1["concentrations"]) + gas_m1["concentrations"][species_idx]*delta), 0)
+        # Xi = max(gas_m1["concentrations"][i] / (sum(gas_m1["concentrations"]) + gas_m1["concentrations"][species_idx]*delta), 0)
+        Xi = gas_m1["concentrations"][i] / (sum(gas_m1["concentrations"]) + gas_m1["concentrations"][species_idx]*delta)
         X.append(Xi)
+        
+X = np.array(X)  # convert the list to a numpy array
+X_clipped = np.maximum(X, 0)  # clip the values to be non-negative
 
 X = dict(zip(gas_m1["species"], X))  # convert the list to a dictionary
 
@@ -114,5 +120,11 @@ perturbed_species = species
 data = np.vstack((ini_perturb_concentration, gas_m1["concentrations"]))
 data = np.vstack((data, (ini_perturb_concentration-gas_m1["concentrations"])/gas_m1["concentrations"]*100))
 df = pd.DataFrame(data, columns=perturbed_species)
-df.to_csv("test_perturb_concentration.csv", index=False)
+df["Description"] = [
+    "Initial Concentration after perturbation",
+    "Initial Concentration before perturbation",
+    "Percentage difference (%)"
+]
+
+df.to_csv("test_perturb_concentration_H2O.csv", index=False)
 
