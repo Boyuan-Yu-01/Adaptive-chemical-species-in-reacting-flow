@@ -21,3 +21,20 @@ The constant TP reactor is modified from the __Constant Pressure Reactor__ with 
 This class summarises all above three reactors. Two methods can be applied for simulations. 
 
 Both methods are demonstrated in the [script](reactors.py)
+
+# Update:
+
+## reduce_reaction.py
+*This is a new python class file that is designed to simulate homogeneous reaction by applying QSSA assumption at __SOME__ time steps*
+
+### Class "Homo_Reactor"
+Class "Homo_Reactor" is adopted from file "reactors.py", one more instance variable is defined: ==self.reaction_info==. This is a __dictionary variable__ that contains:
+
+| key                 | value size |
+| ------------------- | ---------- |
+| t                   | m by 1     |
+| P                   | m by 1     |
+| rho                 | m by 1     |
+| species             | 1 by n     |
+| net_production_rate | m by n     |
+| concentrations      | m by n     |

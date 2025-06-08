@@ -14,9 +14,9 @@ class Homo_Reactor:
         
         # dispatcher: if mode is defined, use it to select the function to call
         self.dispatch = {
-            "const_vol_adia": self.const_vol_adia,
-            "const_pres_adia": self.const_pres_adia,
-            "const_TP_adia": self.const_TP_adia
+            "const_V": self.const_V,
+            "const_P": self.const_P,
+            "const_TP": self.const_TP,
         }
         
     def run(self, mode=None):
@@ -25,7 +25,7 @@ class Homo_Reactor:
             raise ValueError(f"Unknown reactor mode: '{mode_to_run}'")
         return self.dispatch[mode_to_run]()
     
-    def const_TP_adia(self):
+    def const_TP(self):
         '''this function simulates a constant temperature&pressure homogeneous reactor with adiabatic wall
         this function returns the mole fraction of each species at each time step.'''
         
@@ -91,7 +91,7 @@ class Homo_Reactor:
 
         self.reaction_info  = result_dic
     
-    def const_pres_adia(self):
+    def const_P(self):
         '''this function simulates a constant pressure homogeneous reactor with adiabatic wall
         this function returns the mole fraction of each species at each time step.'''
         
@@ -156,7 +156,7 @@ class Homo_Reactor:
 
         self.reaction_info  = result_dic
     
-    def const_vol_adia(self):
+    def const_V(self):
         '''this function simulates a constant volume homogeneous reactor with adiabatic wall
         this function returns the mole fraction of each species at each time step.'''
         
@@ -238,8 +238,6 @@ output_file = "test_TP.csv"
 
 # run the simulation
 
-sim1 = Homo_Reactor(gas=gas, dt_max=dt_max, t_end=t_end, mode="const_TP_adia", csv_output=output_file)
+sim1 = Homo_Reactor(gas=gas, dt_max=dt_max, t_end=t_end, mode="const_P")
 sim1.run()
 result = sim1.reaction_info
-print(result.keys())
-

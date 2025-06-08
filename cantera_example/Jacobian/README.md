@@ -7,7 +7,7 @@ $$
 $$
 This value can be approximated by perturbing species j's concentration at the last time step, and then advance one time step. The original concentration is $S_j^t$, and the after perturbed concentration is $S_j^{\prime, t}$. The Jacobian can be approximated as:
 $$
-\frac{\partial S_i^{t}}{\partial S_j^{t-1}} \approx \frac{S_j^{\prime, t}-S_i^{t}}{S_j^{\prime, t-1}-S_j^{t-1}}=\frac{S_j^{\prime, t}-S_i^{t}}{(1+\delta)S_j^{t-1}} 
+\frac{\partial S_i^{t}}{\partial S_j^{t-1}} \approx \frac{S_i^{\prime, t}-S_i^{t}}{S_j^{\prime, t-1}-S_j^{t-1}}=\frac{S_i^{\prime, t}-S_i^{t}}{(1+\delta)S_j^{t-1}} 
 $$
 Notice that __perturbing each individual species helps to calculate a column in the Jacobian Matrix__. Therefore, this perturbation process is required to iterate # of species times.
 
