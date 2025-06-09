@@ -25,9 +25,9 @@ def const_pres_adia(gas, dt_max, t_end, output_file):
     P = states.P.reshape(-1, 1)  # convert to a column vector
     T = states.T.reshape(-1, 1)  # convert to a column vector
     rho = states.D.reshape(-1, 1)  # convert to a column vector
-    species = states.species_names
-    titles = np.hstack((['t [s]', 'P [Pa]', 'T [K]', 'rho [kg/m^3]'], species))
-    data = np.hstack((t, P, T, rho, states.X))
+    species_title = np.char.add(states.species_names, " [kmol/m^3]")
+    titles = np.hstack((['t [s]', 'P [Pa]', 'T [K]', 'rho [kg/m^3]'], species_title))
+    data = np.hstack((t, P, T, rho, np.array(states.concentrations)))
     
     # conclude data into a pandas dataframe
     df = pd.DataFrame(data, columns=titles)

@@ -32,21 +32,19 @@ class ReactorOde:
         # ReactorOde object.
         self.gas = gas
         self.P = gas.P
+        self.T = gas.T
 
     def __call__(self, t, y):
         """the ODE function, y' = f(t,y) """
-
-        # State vector is [T, Y_1, Y_2, ... Y_K]
-        self.gas.set_unnormalized_mass_fractions(y[1:])
-        self.gas.TP = y[0], self.P
+        # State vector is [Y_1, Y_2, ... Y_K]
+        self.gas.set_unnormalized_mass_fractions(y)
+        self.gas.TP = self.T, self.P
         rho = self.gas.density
 
         wdot = self.gas.net_production_rates
-        dTdt = - (np.dot(self.gas.partial_molar_enthalpies, wdot) /
-                  (rho * self.gas.cp))
         dYdt = wdot * self.gas.molecular_weights / rho
 
-        return np.hstack((dTdt, dYdt))
+        return np.array(dYdt)
 
 
 scheme = 'FFCM2.yaml'
@@ -55,9 +53,9 @@ scheme = 'FFCM2.yaml'
 gas = ct.Solution(scheme)
 T = 2000
 P = 1 * ct.one_atm
-X = "CH4:1, O2:2, OH:-1e-5"
+X = "CH4:1, O2:2"
 gas.TPX = T, P, X
-y0 = np.hstack((gas.T, gas.Y))
+y0 = np.array(gas.Y)
 
 t = [0.0]
 
@@ -65,7 +63,7 @@ t = [0.0]
 ode = ReactorOde(gas)
 solver = scipy.integrate.ode(ode)
 solver.set_integrator('vode', method='bdf', with_jacobian=True)
-solver.set_initial_value(y0, 0.0)
+solver.set_initial_value(y0)
 
 # Integrate the equations, keeping T(t) and Y(k,t)
 t_end = 0.002
@@ -74,7 +72,7 @@ dt = 1e-8
 t = [0.0]
 while solver.successful() and solver.t < t_end:
     solver.integrate(solver.t + dt)
-    gas.TPY = solver.y[0], P, solver.y[1:]
+    gas.TPY = T, P, solver.y
     states.append(gas.state, t=solver.t)
     t.append(solver.t)
     
@@ -108,4 +106,3 @@ df.to_csv("online_const_P.csv", index=False)
 #     plt.show()
 # except ImportError:
 #     print('Matplotlib not found. Unable to plot results.')
-

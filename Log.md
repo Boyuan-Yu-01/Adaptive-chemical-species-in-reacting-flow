@@ -232,3 +232,15 @@ Final exams
 In revising the "mu_ranking_t_step.py" file, an error is observed. In the script, same name is used to define two variables.
 ### Solution
 summarise __reactors__, __$\mu$ calculation__, and __npr calculation__ into ==class methods== instead of each individual function and scripts.
+
+# May 27th & June 2nd
+Travel to China and Germany
+
+# June 10th
+
+| Object                                                                 | Specification                                                                                                                                                                                                                                                                      |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| combine previous written classes and functions into a single big class | - [script](cantera_example/reduce_reaction.py)                                                                                                                                                                                                                                     |
+| online function to replace cantera 'IdealGasConstPressureMoleReactor'  | - [comparison 1](cantera_example/const_pres/CH4_comparison.jpg)<br>- [comparison 2](cantera_example/const_pres/CO2_comparison.jpg)<br>- [comparison 3](cantera_example/const_pres/H2O_comparison.jpg)<br>- [comparison_const_TP](cantera_example/const_TP/const_TP_comparison.jpg) |
+|                                                                        |                                                                                                                                                                                                                                                                                    |
+

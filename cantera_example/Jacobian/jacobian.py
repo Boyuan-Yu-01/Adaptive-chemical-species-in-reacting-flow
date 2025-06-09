@@ -157,4 +157,4 @@ t_end = 3e-5
 # run the simulation 
 t, P, T, rho, species, net_production_rates, concentrations, X = const_vol_adia(gas, dt_max, t_end)
 
-Jacobian_matrix = Calculate_Jacobian(t, P, T, species, net_production_rates, concentrations, X, 5)
+Jacobian_matrix = Calculate_Jacobian(t, P, T, species, net_production_rates, concentrations, X, 1234)

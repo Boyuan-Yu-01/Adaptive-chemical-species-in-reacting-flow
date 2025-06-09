@@ -39,13 +39,8 @@ class Homo_Reactor:
         r = ct.IdealGasConstPressureMoleReactor(gas, energy="off", name="isothermal_reactor")
         sim = ct.ReactorNet([r])
         sim.verbose = True
-        states = ct.SolutionArray(gas)
+        states = ct.SolutionArray(gas, 1)
         t = [0]  # initialise the time array
-        P_ini = gas.P
-        T_ini = gas.T
-        rho_ini = gas.density
-        net_production_rates_ini = gas.net_production_rates
-        concentrations_ini = gas.concentrations
 
         # reaction progression w.r.t. time
         while sim.time < t_end:
@@ -56,17 +51,11 @@ class Homo_Reactor:
         
         # extract information that later will be put into the output file
         t = np.array(t).reshape(-1, 1)  # conlumn vector: m by 1
-        P = states.P
-        P = np.insert(P, 0, P_ini)
-        P = P.reshape(-1, 1)  # column vector: m by 1
-        T = states.T
-        T = np.insert(T, 0, T_ini)
-        T = T.reshape(-1, 1)  # column vector: m by 1
-        rho = states.D
-        rho = np.insert(rho, 0, rho_ini)
-        rho = rho.reshape(-1, 1)  # column vector: m by 1
-        net_production_rates = np.vstack((net_production_rates_ini, states.net_production_rates))
-        concentrations = np.vstack((concentrations_ini, states.concentrations))
+        P = np.array(states.P).reshape(-1, 1)  # column vector: m by 1
+        T = np.array(states.T).reshape(-1, 1)  # column vector: m by 1
+        rho = np.array(states.D).reshape(-1, 1)  # column vector: m by 1
+        net_production_rates = np.array(states.net_production_rates)
+        concentrations = np.array(states.concentrations)
         species = np.array(states.species_names)
         result_dic = {
             "t": t,     # m by 1
@@ -105,13 +94,8 @@ class Homo_Reactor:
         r = ct.IdealGasConstPressureMoleReactor(gas)
         sim = ct.ReactorNet([r])
         sim.verbose = True
-        states = ct.SolutionArray(gas)
+        states = ct.SolutionArray(gas, 1)
         t = [0]  # initialise the time array
-        P_ini = gas.P
-        T_ini = gas.T
-        rho_ini = gas.density
-        net_production_rates_ini = gas.net_production_rates
-        concentrations_ini = gas.concentrations
         
         # reaction progression w.r.t. time
         while sim.time < t_end:
@@ -121,17 +105,11 @@ class Homo_Reactor:
         
         # extract information that later will be put into the output file
         t = np.array(t).reshape(-1, 1)  # conlumn vector: m by 1
-        P = states.P
-        P = np.insert(P, 0, P_ini)
-        P = P.reshape(-1, 1)  # column vector: m by 1
-        T = states.T
-        T = np.insert(T, 0, T_ini)
-        T = T.reshape(-1, 1)  # column vector: m by 1
-        rho = states.D
-        rho = np.insert(rho, 0, rho_ini)
-        rho = rho.reshape(-1, 1)  # column vector: m by 1
-        net_production_rates = np.vstack((net_production_rates_ini, states.net_production_rates))
-        concentrations = np.vstack((concentrations_ini, states.concentrations))
+        P = np.array(states.P).reshape(-1, 1)  # column vector: m by 1
+        T = np.array(states.T).reshape(-1, 1)  # column vector: m by 1
+        rho = np.array(states.D).reshape(-1, 1)  # column vector: m by 1
+        net_production_rates = np.array(states.net_production_rates)
+        concentrations = np.array(states.concentrations)
         species = np.array(states.species_names)
         result_dic = {
             "t": t,     # m by 1
@@ -170,13 +148,8 @@ class Homo_Reactor:
         r = ct.IdealGasMoleReactor(gas)
         sim = ct.ReactorNet([r])
         sim.verbose = True
-        states = ct.SolutionArray(gas)
+        states = ct.SolutionArray(gas, 1)
         t = [0]  # initialise the time array
-        P_ini = gas.P
-        T_ini = gas.T
-        rho_ini = gas.density
-        net_production_rates_ini = gas.net_production_rates
-        concentrations_ini = gas.concentrations
         
         # reaction progression w.r.t. time
         while sim.time < t_end:
@@ -186,17 +159,11 @@ class Homo_Reactor:
         
         # extract information that later will be put into the output file
         t = np.array(t).reshape(-1, 1)  # conlumn vector: m by 1
-        P = states.P
-        P = np.insert(P, 0, P_ini)
-        P = P.reshape(-1, 1)  # column vector: m by 1
-        T = states.T
-        T = np.insert(T, 0, T_ini)
-        T = T.reshape(-1, 1)  # column vector: m by 1
-        rho = states.D
-        rho = np.insert(rho, 0, rho_ini)
-        rho = rho.reshape(-1, 1)  # column vector: m by 1
-        net_production_rates = np.vstack((net_production_rates_ini, states.net_production_rates))
-        concentrations = np.vstack((concentrations_ini, states.concentrations))
+        P = np.array(states.P).reshape(-1, 1)  # column vector: m by 1
+        T = np.array(states.T).reshape(-1, 1)  # column vector: m by 1
+        rho = np.array(states.D).reshape(-1, 1)  # column vector: m by 1
+        net_production_rates = np.array(states.net_production_rates)
+        concentrations = np.array(states.concentrations)
         species = np.array(states.species_names)
         result_dic = {
             "t": t,     # m by 1
@@ -221,6 +188,7 @@ class Homo_Reactor:
 
         self.reaction_info  = result_dic
     
+    
     # set up the gas object
 scheme = "FFCM2.yaml"
 # scheme = "FFCM1_21.yaml"
@@ -234,10 +202,10 @@ gas.TPX = T, P, X
 dt_max = 1e-8
 t_end = 3e-5
 # t_end = 1e-7    # for testing
-output_file = "test_TP.csv"
+output_file = "const_V_cantera.csv"
 
 # run the simulation
 
-sim1 = Homo_Reactor(gas=gas, dt_max=dt_max, t_end=t_end, mode="const_P")
+sim1 = Homo_Reactor(gas=gas, dt_max=dt_max, t_end=t_end, mode="const_V", csv_output=output_file)
 sim1.run()
 result = sim1.reaction_info
