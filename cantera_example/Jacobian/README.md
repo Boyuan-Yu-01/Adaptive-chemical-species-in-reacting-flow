@@ -45,3 +45,31 @@ X_{i}^{\prime} =
 $$
 where,
 $$\eta = 1 \times 10^{-16}$$
+
+## Approximation Methodology
+*Approximate $\frac{\partial S^t_i}{\partial S^{t-1}_j}$ as $\dot{S^t_i}/\dot{S^{t-1}_j}$ may not be a good approximation.*
+
+To begin with, the change in concentration of species "i" can be approximated by:
+$$
+S^{t+1}_i - S^{t}_i = \sum\frac{\partial S_i^t}{\partial S_j^{t-1}} \dot{S^{t-1}_j} \cdot \delta_t
+$$
+<span style="color: red;">if we approximate the partial term by:</span>
+$$
+\frac{\partial S_i^{t}}{\partial S_j^{t-1}} \approx \frac{dS^t_i}{dt} / \frac{dS^{t-1}}{dt}
+$$
+i.e.
+$$
+\frac{\partial S_i^{t}}{\partial S_j^{t-1}} \approx \dot{S^t_i}/\dot{S^{t-1}_j}
+$$
+
+The change in concentration of species "i" then will be written as:
+$$
+S^{t+1}_i - S^{t}_i = \sum\frac{\dot{S_i^t}}{\dot{S_j^{t-1}}} \dot{S^{t-1}_j} \cdot \delta_t
+$$
+which is 
+$$
+S^{t+1}_i - S^{t}_i = \dot{S_i^t}\cdot \delta_t \cdot n
+$$
+where n is the number of species. 
+
+From this, I believe that <span style="color: red;">we can not approximate the partial differential by the fraction of time differential</span>

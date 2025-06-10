@@ -44,7 +44,6 @@ class ReactorOde:
         dTdt = - (np.dot(self.gas.partial_molar_enthalpies, wdot) /
                   (self.rho * self.gas.cp))
         dYdt = wdot * self.gas.molecular_weights / self.rho
-
         return np.hstack((dTdt, dYdt))
 
 
@@ -78,7 +77,7 @@ while solver.successful() and solver.t < t_end:
     states.append(gas.state, t=solver.t)
     t.append(solver.t)
     
-rho = np.array(states.D).reshape(-1, 1)  # column vector: m by 1
+P = np.array(states.P).reshape(-1, 1)  # column vector: m by 1
 T = np.array(states.T).reshape(-1, 1)  # column vector: m by 1
 t = np.array(t).reshape(-1, 1)  # column vector: m by 1
 # include some species of interest
@@ -88,8 +87,8 @@ concentrations = np.array(states.concentrations)[:, soi_idx]
 
 
 # output t, rho, T into a csv file
-titles = ["t [s]", "rho [kg/m^3]", "T [K]"] + species_of_interest
-data = np.hstack((t, rho, T, concentrations))
+titles = ["t [s]", "P [Pa]", "T [K]"] + species_of_interest
+data = np.hstack((t, P, T, concentrations))
 df = pd.DataFrame(data, columns=titles)
 df.to_csv("online_const_V.csv", index=False)
 
