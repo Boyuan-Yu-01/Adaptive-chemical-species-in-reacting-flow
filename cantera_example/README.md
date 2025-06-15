@@ -52,6 +52,3 @@ Class "Homo_Reactor_ODE" are ODE functions and solver for constant volume and co
 Class "Homo_Reactor" call ODE solvers from "Homo_Reactor_ODE" instead of cantera
 	Method "csv_output" controls the number of species output
 
-# Update (version 3)
-*This version includes argument in function such that we can "switch off" these species*
-

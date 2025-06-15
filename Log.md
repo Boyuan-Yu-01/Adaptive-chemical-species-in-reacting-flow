@@ -252,3 +252,4 @@ Travel to China and Germany
 | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | - homogeneous reactor version 2                                            | - [code](cantera_example/reduce_reaction_ver2.py)<br>- [README](cantera_example/README.md) |
 | - Jacobian Calculation methodology and mathematical derivations (page 6-8) | - [details](/SVD_QSSA/discrete.pdf)                                                        |
+| - Programming constant-volume Jacobian                                     | - [code](cantera_example/Jacobian/test.py)                                                 |

@@ -3,128 +3,105 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.colors import Normalize
+import scipy.integrate
 import numpy as np
 import pandas as pd
 scheme = "FFCM2.yaml"
-# scheme = "FFCM1_21.yaml"
 
-def const_vol_adia(gas, dt_max, t_end):
-    '''this function simulates a constant pressure homogeneous reactor with adiabatic wall
-       this function returns the mole fraction of each species at each time step.'''
-    r = ct.IdealGasMoleReactor(gas)
-    sim = ct.ReactorNet([r])
-    sim.verbose = True
-    states = ct.SolutionArray(gas)
-    # initial conditions
-    t = [0]  # initialise the time array
-    P_ini = gas.P
-    T_ini = gas.T
-    rho_ini = gas.density
-    net_production_rates_ini = gas.net_production_rates
-    concentrations_ini = gas.concentrations
-    X_ini = gas.X
-
-    while sim.time < t_end:
-        sim.advance(sim.time + dt_max)
-        states.append(r.thermo.state)
-        t.append(sim.time)
+class Homo_Reaction_ODE:
+    def __init__(self, gas):
+        self.gas = gas
     
-    # convert the states to numpy arrays
-    t = np.array(t)                                                                         # time, have size m                                                       # pressure, have size m   
-    P = np.array(states.P)                                                                  # pressure, have size m         
-    P = np.insert(P, 0, P_ini )                           
-    T = states.T                                                                            # temperature, have size m
-    T = np.insert(T, 0, T_ini)
-    rho = states.D                                                                          # density, have size m                         
-    rho = np.insert(rho, 0, rho_ini)
-    species = np.array(states.species_names)                                                # species names, have size n                                  
-    net_production_rates = np.vstack((net_production_rates_ini, states.net_production_rates))                            # reaction rates, have size m*n
-    concentrations = np.vstack((concentrations_ini, states.concentrations)) 
-    X = np.vstack((X_ini, states.X))# concentrations, have size m*n
-    
-    return t, P, T, rho, species, net_production_rates, concentrations, X
+    def const_V_ODE(self, t, y):
+        """The ODE function to solve constant volume homogeneous reaction"""
+        # State vector is [T, Y_1, Y_2, ... Y_K]
+        self.gas.set_unnormalized_mass_fractions(y[1:])
+        self.gas.TD = y[0], self.rho
+        
+        # reaction equations:
+        wdot = self.gas.net_production_rates
+        dTdt = - (np.dot(self.gas.partial_molar_int_energies, wdot) /
+                  (self.rho * self.gas.cv))
+        dYdt = wdot * self.gas.molecular_weights / self.rho
+        return np.hstack((dTdt, dYdt))
 
-##########################    
-# set up the gas object ##
-##########################
+    def reaction_progress(self, reactor, dt, t_end, t_start=0.0, method='bdf',energy='on'):
+        """Integrate the ODE system from t_start to t_end with time step dt
+           Choose reactor type: 'const_V' or 'const_P'
+           """
+        # choose equation system to solve
+        if reactor.lower() == "const_v":
+            sys = self.const_V_ODE
+            self.rho, _ = self.gas.DP
+        elif reactor.lower() == "const_p":
+            sys = lambda t, y: self.const_P_ODE(t, y, energy=energy)
+            self.P = self.gas.P
+        
+        # set up the ODE solver
+        solver = scipy.integrate.ode(sys)
+        solver.set_integrator('vode', method=method, with_jacobian=True)
+        y0 = np.hstack((self.gas.T, self.gas.Y))
+        solver.set_initial_value(y0, t_start)
+        
+        # prepare to store results
+        states = ct.SolutionArray(self.gas, 1, extra={'t':[t_start]})
+        while solver.successful() and solver.t < t_end:
+            solver.integrate(solver.t + dt)
+            if reactor.lower() == "const_v":
+                self.gas.TDY = solver.y[0], self.rho, solver.y[1:]
+            elif reactor.lower() == "const_p":
+                self.gas.TPY = solver.y[0], self.P, solver.y[1:]
+            states.append(self.gas.state, t=solver.t)
+            
+        return states        
+    
+def importance_matrix(state1, state2, scheme):
+    """This function evaluats and returns the importance matrix"""
+    
+    def concentration_perturbation(state1, state2, idx, dt, scheme):
+        """ This function perturbs the concentration of the gas at state1
+            'idx' is the index of the species to be perturbed
+            'dt' is the time step from state1 to state2"""
+        P = state1.P.copy()
+        T = state1.T.copy()
+        concentrations = state1.concentrations.copy()
+        
+        # perturb the concentration of species[idx], create states_p to record the perturbed state
+        concentrations_p = concentrations.copy()  # make a copy of the concentrations to perturb
+        concentrations_p[idx] += state1.net_production_rates[idx] * dt
+        P_p = P * np.sum(concentrations_p) / np.sum(concentrations)  # adjust pressure to keep the total moles constant
+        X = concentrations_p / np.sum(concentrations_p)  # normalize concentrations to get mole fractions
+        gas_p = ct.Solution(scheme)
+        gas_p.TPX = T, P_p, X     # set up the perturbed gas state
+        
+        reactor_p = Homo_Reaction_ODE(gas_p)
+        states_p = reactor_p.reaction_progress(reactor="const_v", dt=dt,
+                                               t_end=state2.t, t_start=state1.t)
+        ith_col = (states_p[-1].concentrations - state2.concentrations)/dt # The ith column of the importance matrix
+        return ith_col      # this is a 1D array
+        
+    size = np.array(state1.speices_names).size  # size of m
+    matrix = np.zeros((size, size)) # initialise the importance matrix of size m by m
+    dt = state2.t = state1.t 
+    for i in range(size):   # this loop iterates through each species
+        # perturb the concentration of species i by its n.p.r * dt
+        ith_col = concentration_perturbation(state1, state2, i, dt, scheme)
+        matrix[:,i] = ith_col
+    return matrix
+    
+
+## set up initial gas composition
 gas = ct.Solution(scheme)
 T = 2000
 P = 1 * ct.one_atm
 X = "CH4:1, O2:2"
 gas.TPX = T, P, X
 
-# set up the t constraints for the simulation and output file
+## set up the t constraints for the simulation
 dt_max = 1e-8
 t_end = 3e-5
 
-# run the simulation 
-t, P, T, rho, species, net_production_rates, concentrations, X = const_vol_adia(gas, dt_max, t_end)
-
-##################################
-## test: perturb the gas object ##
-###################################
-
-idx = 2540
-gas_m1 = {  # This dictionary stors the gas information at t(i-1)
-        "t": t[idx-1],
-        "P": P[idx-1],
-        "T": T[idx-1],
-        "species": species,
-        "concentrations": concentrations[idx-1,:],
-        "X": X[idx-1,:],
-}
-
-gas_1 = {  # This dictionary stores the gas information at t(i)  
-        "t": t[idx],
-        "P": P[idx],
-        "T": T[idx],
-        "species": species,
-        "concentrations": concentrations[idx,:],
-        "X": X[idx,:],
-    }
-
-# perturb gas_m1 object
-delta = 0.1
-species_idx = 5  # the index of the species to be perturbed
-T_perturb = gas_m1["T"]    # temperature will not change
-P_perturb = gas_m1["P"] * (sum(gas_m1["concentrations"])) / (sum(gas_m1["concentrations"]) + gas_m1["concentrations"][species_idx]*delta) # since the concentration of a species is perturbed, the pressure will change
-
-X = []
-for i in range(len(gas_m1["concentrations"])):
-    if i == species_idx:
-        # Xi = max((gas_m1["concentrations"][species_idx]*(1+delta))/ (sum(gas_m1["concentrations"]) + gas_m1["concentrations"][species_idx]*delta),0)
-        Xi = (gas_m1["concentrations"][species_idx]*(1+delta))/ (sum(gas_m1["concentrations"]) + gas_m1["concentrations"][species_idx]*delta)
-        X.append(Xi)
-    else:
-        # Xi = max(gas_m1["concentrations"][i] / (sum(gas_m1["concentrations"]) + gas_m1["concentrations"][species_idx]*delta), 0)
-        Xi = gas_m1["concentrations"][i] / (sum(gas_m1["concentrations"]) + gas_m1["concentrations"][species_idx]*delta)
-        X.append(Xi)
-        
-X = np.array(X)  # convert the list to a numpy array
-X_clipped = np.maximum(X, 0)  # clip the values to be non-negative
-
-X = dict(zip(gas_m1["species"], X))  # convert the list to a dictionary
-
-# given TPX, now we create a after-perturbed gas object
-gas_perturb = ct.Solution(scheme)
-gas_perturb.TPX = T_perturb, P_perturb, X
-
-dt_perturb = gas_1["t"] - gas_m1["t"]        # set up time constraints for the simulation
-t_end_perturb = dt_perturb                        # set up time constraints for the simulation
-_, _, _, _, species_perturbed, _, concentrations_perturbed, _ = const_vol_adia(gas_perturb, dt_max, t_end_perturb)
-
-ini_perturb_concentration = concentrations_perturbed[0,:]
-perturbed_species = species
-
-## output into a csv file:
-data = np.vstack((ini_perturb_concentration, gas_m1["concentrations"]))
-data = np.vstack((data, (ini_perturb_concentration-gas_m1["concentrations"])/gas_m1["concentrations"]*100))
-df = pd.DataFrame(data, columns=perturbed_species)
-df["Description"] = [
-    "Initial Concentration after perturbation",
-    "Initial Concentration before perturbation",
-    "Percentage difference (%)"
-]
-
-df.to_csv("test_perturb_concentration_H2O.csv", index=False)
-
+## setup reactor
+reactor_ODE = Homo_Reaction_ODE(gas).const_V_ODE
+states = ct.SolutionArray(gas, 1, extra={'t':[0.0]})
+print(isinstance(states.concentrations, np.ndarray))
