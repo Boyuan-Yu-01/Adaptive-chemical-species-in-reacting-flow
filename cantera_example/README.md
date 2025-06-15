@@ -2,6 +2,7 @@
 __Thermodynamic properties and their abbreviations:__ [Link](https://cantera.org/2.5/sphinx/html/cython/thermo.html)
 __Chemical Kinetics and their abbreviations:__  [Link](https://cantera.org/3.1/python/kinetics.html)
 
+# version 0
 ## Constant Pressure Reactor
 There are two functions: __IdealGasConstPressureReactor__ and __IdealGasConstPressurMoleReactor__
 
@@ -22,7 +23,7 @@ This class summarises all above three reactors. Two methods can be applied for s
 
 Both methods are demonstrated in the [script](reactors.py)
 
-# Update:
+# Update (version 1):
 
 ## reduce_reaction.py
 *This is a new python class file that is designed to simulate homogeneous reaction by applying QSSA assumption at __SOME__ time steps*
@@ -38,3 +39,19 @@ Class "Homo_Reactor" is adopted from file "reactors.py", one more instance varia
 | species             | 1 by n     |
 | net_production_rate | m by n     |
 | concentrations      | m by n     |
+
+# Update (version 2)
+
+## reduce_reaction.py
+*This is a python class file that contain two classes: 'Homo_Reaction_ODE' and 'Homo_Reactor'*
+
+### Class "Homo_Reactor_ODE"
+Class "Homo_Reactor_ODE" are ODE functions and solver for constant volume and constant pressure homogeneous reactions.
+
+### Class "Homo_Reactor"
+Class "Homo_Reactor" call ODE solvers from "Homo_Reactor_ODE" instead of cantera
+	Method "csv_output" controls the number of species output
+
+# Update (version 3)
+*This version includes argument in function such that we can "switch off" these species*
+

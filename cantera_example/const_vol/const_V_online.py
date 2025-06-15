@@ -41,11 +41,28 @@ class ReactorOde:
         # rho = self.gas.density
 
         wdot = self.gas.net_production_rates
-        dTdt = - (np.dot(self.gas.partial_molar_enthalpies, wdot) /
-                  (self.rho * self.gas.cp))
+        dTdt = - (np.dot(self.gas.partial_molar_int_energies, wdot) /
+                  (self.rho * self.gas.cv))
         dYdt = wdot * self.gas.molecular_weights / self.rho
         return np.hstack((dTdt, dYdt))
 
+    def reaction_progress(self, dt, t_end, method='bdf'):
+        """Integrate the ODE system from t=0 to t=t_end with a time step dt."""
+        # Set up the ODE solver
+        solver = scipy.integrate.ode(self)
+        solver.set_integrator('vode', method=method, with_jacobian=True)
+        y0 = np.hstack((self.gas.T, self.gas.Y))
+        solver.set_initial_value(y0, 0.0)
+
+        # Prepare to store results
+        states = ct.SolutionArray(self.gas, 1, extra={'t':[0.0]})
+
+        while solver.successful() and solver.t < t_end:
+            solver.integrate(solver.t + dt)
+            self.gas.TDY = solver.y[0], self.rho, solver.y[1:]
+            states.append(self.gas.state, t=solver.t)
+
+        return states
 
 scheme = 'FFCM2.yaml'
 
@@ -58,28 +75,29 @@ gas.TPX = T, P, X
 _,D = gas.TD # density, m^3
 y0 = np.hstack((gas.T, gas.Y))
 
-t = [0.0]
+# t = [0.0]
 
 # Set up objects representing the ODE and the solver
 ode = ReactorOde(gas)
-solver = scipy.integrate.ode(ode)
-solver.set_integrator('vode', method='bdf', with_jacobian=True)
-solver.set_initial_value(y0, 0.0)
+# solver = scipy.integrate.ode(ode)
+# solver.set_integrator('vode', method='bdf', with_jacobian=True)
+# solver.set_initial_value(y0, 0.0)
 
 # Integrate the equations, keeping T(t) and Y(k,t)
-t_end = 0.002
-states = ct.SolutionArray(gas, 1)
-dt = 1e-8
-t = [0.0]
-while solver.successful() and solver.t < t_end:
-    solver.integrate(solver.t + dt)
-    gas.TDY = solver.y[0], D, solver.y[1:]
-    states.append(gas.state, t=solver.t)
-    t.append(solver.t)
+# t_end = 0.002
+# states = ct.SolutionArray(gas, 1)
+# dt = 1e-8
+# t = [0.0]
+# while solver.successful() and solver.t < t_end:
+#     solver.integrate(solver.t + dt)
+#     gas.TDY = solver.y[0], D, solver.y[1:]
+#     states.append(gas.state, t=solver.t)
+#     t.append(solver.t)
+states = ReactorOde.reaction_progress(ode, dt=1e-8, t_end=2e-3, method='bdf')
     
 P = np.array(states.P).reshape(-1, 1)  # column vector: m by 1
 T = np.array(states.T).reshape(-1, 1)  # column vector: m by 1
-t = np.array(t).reshape(-1, 1)  # column vector: m by 1
+t = np.array(states.t).reshape(-1, 1)  # column vector: m by 1
 # include some species of interest
 species_of_interest = ['OH', 'H2O', 'CO2', 'CH4']
 soi_idx = [list(states.species_names).index(item) for item in species_of_interest]

@@ -236,7 +236,7 @@ summarise __reactors__, __$\mu$ calculation__, and __npr calculation__ into ==cl
 # May 27th & June 2nd
 Travel to China and Germany
 
-# June 10th
+# Jun. 10th
 ## <span style="color: red;">Done List</span> 
 
 | Object                                                                                      | Specification                                                                                                                                                                                                                                                                      |
@@ -246,3 +246,9 @@ Travel to China and Germany
 | <span style="color: red;">Fail to achieve: constant volume reactor</span>                   | - [code](cantera_example/const_vol/const_V_online.py)<br>- [false_demo](cantera_example/const_vol/false.jpg)                                                                                                                                                                       |
 | Discuss: cannot approximate the partial differential by the fraction of time differential   | - [README](cantera_example/Jacobian/README.md)                                                                                                                                                                                                                                     |
 
+# Jun. 17th
+## <span style="color: red;">Done List</span> 
+| Object                                                                     | Specification                                                                              |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| - homogeneous reactor version 2                                            | - [code](cantera_example/reduce_reaction_ver2.py)<br>- [README](cantera_example/README.md) |
+| - Jacobian Calculation methodology and mathematical derivations (page 6-8) | - [details](/SVD_QSSA/discrete.pdf)                                                        |
