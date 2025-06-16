@@ -46,7 +46,7 @@ $$
 where,
 $$\eta = 1 \times 10^{-16}$$
 
-## Approximation Methodology
+## Approximation Methodology 1 (theoretically does not work)
 *Approximate $\frac{\partial S^t_i}{\partial S^{t-1}_j}$ as $\dot{S^t_i}/\dot{S^{t-1}_j}$ may not be a good approximation.*
 
 To begin with, the change in concentration of species "i" can be approximated by:
@@ -73,3 +73,22 @@ $$
 where n is the number of species. 
 
 From this, I believe that <span style="color: red;">we can not approximate the partial differential by the fraction of time differential</span>
+
+## Approximation Methodology 2(may not be correct)
+*Approximate $\frac{\partial S^t_i}{\partial S^{t-1}_j} \cdot \dot{S^{t-1}_j} \cdot \Delta t$ to be $\tilde{S^t_i}-S^t_i$. This methodology is also mentioned in [hand written notes](https://github.com/Boyuan-Yu-01/Adaptive-chemical-species-in-reacting-flow/blob/main/SVD_QSSA/discrete.pdf)* 
+
+$$
+\frac{\partial S^t_i}{\partial S^{t-1}_j} \cdot \dot{S^{t-1}_j} \cdot \Delta t \approx \frac{\tilde{S^t_i}-S^t_i}{\tilde{S}^{t-1}_j - S^{t-1}_j} \cdot \dot{S}^{t-1}_j \cdot \Delta t
+$$
+If we perturb the concentration by its net production rate times $\Delta t$, we have:
+$$
+\tilde{S}^{t-1}_j = S^{t-1}_j + \omega \cdot \Delta t
+$$
+and the above equation can be __further__ approximated by:
+$$
+\frac{\partial S^t_i}{\partial S^{t-1}_j} \cdot \dot{S^{t-1}_j} \cdot \Delta t \approx \tilde{S^t_i}-S^t_i
+$$
+
+__However, when I try to do it, I yields the following result:__
+![p](plots/wrong_Jacobian.png)
+<span style="color: red;">The "contribution" of each species seems to be very similar to each other</span>

@@ -248,8 +248,9 @@ Travel to China and Germany
 
 # Jun. 17th
 ## <span style="color: red;">Done List</span> 
-| Object                                                                     | Specification                                                                              |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| - homogeneous reactor version 2                                            | - [code](cantera_example/reduce_reaction_ver2.py)<br>- [README](cantera_example/README.md) |
-| - Jacobian Calculation methodology and mathematical derivations (page 6-8) | - [details](/SVD_QSSA/discrete.pdf)                                                        |
-| - Programming constant-volume Jacobian                                     | - [code](cantera_example/Jacobian/test.py)                                                 |
+| Object                                                                     | Specification                                                                                                                                                            |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - homogeneous reactor version 2                                            | - [code](cantera_example/reduce_reaction_ver2.py)<br>- [README](cantera_example/README.md)                                                                               |
+| - Jacobian Calculation methodology and mathematical derivations (page 6-9) | - [details](/SVD_QSSA/discrete.pdf)                                                                                                                                      |
+| - Programming constant-volume Jacobian                                     | - [code](cantera_example/Jacobian/test.py)<br>- [problem with this approximation method](cantera_example/Jacobian/README.md)<br>- [screenshot](plots/wrong_Jacobian.png) |
+|                                                                            |                                                                                                                                                                          |

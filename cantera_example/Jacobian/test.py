@@ -80,15 +80,18 @@ def importance_matrix(state1, state2, scheme):
         ith_col = (states_p[-1].concentrations - state2.concentrations)/dt # The ith column of the importance matrix
         return ith_col      # this is a 1D array
         
-    size = np.array(state1.speices_names).size  # size of m
+    size = np.array(state1.species_names).size  # size of m
     matrix = np.zeros((size, size)) # initialise the importance matrix of size m by m
-    dt = state2.t = state1.t 
+    dt = state2.t - state1.t 
     for i in range(size):   # this loop iterates through each species
         # perturb the concentration of species i by its n.p.r * dt
         ith_col = concentration_perturbation(state1, state2, i, dt, scheme)
         matrix[:,i] = ith_col
     return matrix
     
+def calculate_mu(state1):
+    mu = np.array(state1.net_production_rates) / np.array(state1.concentrations)
+    return mu
 
 ## set up initial gas composition
 gas = ct.Solution(scheme)
@@ -102,6 +105,73 @@ dt_max = 1e-8
 t_end = 3e-5
 
 ## setup reactor
+reactor = Homo_Reaction_ODE(gas)
 reactor_ODE = Homo_Reaction_ODE(gas).const_V_ODE
-states = ct.SolutionArray(gas, 1, extra={'t':[0.0]})
-print(isinstance(states.concentrations, np.ndarray))
+states = reactor.reaction_progress(reactor="const_V", dt=dt_max, t_end=t_end, t_start=0.0)
+
+# # output states
+# concentrations = np.array(states.concentrations)
+# species_output = np.char.add(states.species_names, "[ kmol/m^3]")
+# titles = np.hstack((['t [s]', 'P [Pa]', 'T [K]', 'rho [kg/m^3]'], species_output))
+# t = np.array(states.t).reshape(-1,1)
+# P = np.array(states.P).reshape(-1, 1)
+# T = np.array(states.T).reshape(-1, 1)
+# rho = np.array(states.D).reshape(-1, 1)
+# data = np.hstack((t, P, T, rho, concentrations))
+# df = pd.DataFrame(data, columns=titles)
+# df.to_csv("const_V.csv", index=False)
+
+state1 = states[1500]
+state2 = states[1501]
+matrix = importance_matrix(state1, state2, scheme=scheme)
+
+# save the matrix to a csv file:
+df = pd.DataFrame(matrix, columns=states.species_names, index=states.species_names)
+df.index.name = "ID"
+df.to_csv("matrix_const_P.csv")
+
+# rank mu
+def ranked_arrays(A, B, c, threshold=1e-5):
+    """
+    Ranks A in descending order while pushing any indices where B[i] < threshold to the end.
+    Reorders c accordingly.
+    
+    Parameters:
+        A (mu)           : Numeric array to be ranked.
+        B (concentration): Numeric array used for threshold filtering.
+        c (species name) : String array to follow the order of A.
+        threshold (float): Threshold value for B (default: 1e-16).
+    
+    Returns:
+        A_sorted, B_sorted, c_sorted: Arrays reordered as described.
+    """
+    A = np.array(A)
+    B = np.array(B)
+    c = np.array(c)
+
+    # Identify valid and invalid indices
+    valid_mask = B >= threshold
+    valid_indices = np.where(valid_mask)[0]
+    invalid_indices = np.where(~valid_mask)[0]
+
+    # Sort valid A entries in descending order
+    sorted_valid_indices = valid_indices[np.argsort(-A[valid_indices])]
+
+    # Final combined index order
+    final_indices = np.concatenate((sorted_valid_indices, invalid_indices))
+
+    # Return reordered arrays
+    return A[final_indices], B[final_indices], c[final_indices]
+
+# mu_ranked, concentration_ranked, species_ranked = ranked_arrays(
+#     calculate_mu(state1), 
+#     state1.concentrations, 
+#     state1.species_names
+# )
+
+# df = pd.DataFrame({
+#     "species": species_ranked,
+#     "mu": mu_ranked,
+#     "concentration": concentration_ranked,
+# })
+# df.to_csv("mu_ranked_output.csv", index=False)
