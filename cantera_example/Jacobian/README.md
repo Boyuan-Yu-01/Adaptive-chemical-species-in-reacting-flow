@@ -75,7 +75,7 @@ where n is the number of species.
 From this, I believe that <span style="color: red;">we can not approximate the partial differential by the fraction of time differential</span>
 
 ## Approximation Methodology 2(may not be correct)
-*Approximate $\frac{\partial S^t_i}{\partial S^{t-1}_j} \cdot \dot{S^{t-1}_j} \cdot \Delta t$ to be $\tilde{S^t_i}-S^t_i$. This methodology is also mentioned in [hand written notes](https://github.com/Boyuan-Yu-01/Adaptive-chemical-species-in-reacting-flow/blob/main/SVD_QSSA/discrete.pdf)* 
+*Approximate $\frac{\partial S^t_i}{\partial S^{t-1}_j} \cdot \dot{S^{t-1}_j} \cdot \Delta t$ to be $\tilde{S^t_i}-S^t_i$. This methodology is also mentioned in [hand written notes](https://github.com/Boyuan-Yu-01/Adaptive-chemical-species-in-reacting-flow/blob/main/SVD_QSSA/discrete.pdf). The python code testing this is stored in [here](test.py) * 
 
 $$
 \frac{\partial S^t_i}{\partial S^{t-1}_j} \cdot \dot{S^{t-1}_j} \cdot \Delta t \approx \frac{\tilde{S^t_i}-S^t_i}{\tilde{S}^{t-1}_j - S^{t-1}_j} \cdot \dot{S}^{t-1}_j \cdot \Delta t
