@@ -246,7 +246,7 @@ Travel to China and Germany
 | <span style="color: red;">Fail to achieve: constant volume reactor</span>                   | - [code](cantera_example/const_vol/const_V_online.py)<br>- [false_demo](cantera_example/const_vol/false.jpg)                                                                                                                                                                       |
 | Discuss: cannot approximate the partial differential by the fraction of time differential   | - [README](cantera_example/Jacobian/README.md)                                                                                                                                                                                                                                     |
 
-# Jun. 17th
+# Jun. 17th & 24th
 ## <span style="color: red;">Done List</span> 
 | Object                                                                                                                                                                                                                                           | Specification                                                                                                                                                                                                  |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -255,4 +255,13 @@ Travel to China and Germany
 | - Programming constant-volume Jacobian (['test.py'](cantera_example/Jacobian/test.py))                                                                                                                                                           | - [code](cantera_example/Jacobian/test.py)<br>- [problem with this approximation method](cantera_example/Jacobian/README.md)<br>- [screenshot](cantera_example/Jacobian/plots/wrong_Jacobian.png)              |
 | - Test 2: improved Jacobian Calculation (['test2.py'](cantera_example/Jacobian/test2.py))<br><br>(complete in 8.2s-8.25s)                                                                                                                        | - This time perturbed by 1% of its original concentration, and I can yield reasonable values for perturbing concentrations of reasonable value. However, challenging for extremely small concentration species |
 | - Test 2 parallel: Use the same method to calculate the Jacobian matrix as "Test 2" but apply parallel processing in constructing the Jacobian (['test2_p.py'](cantera_example/Jacobian/test2_p.py))<br><br>(complete in 2.3s, use 26 CPU cores) | - Use parallel processing to calculate the Jacobian matrix. This saves 72% of time<br>- The perturbation uses factor 1.01 and yields reasonable results                                                        |
-|                                                                                                                                                                                                                                                  |                                                                                                                                                                                                                |
+
+# July 1st
+## <span style="color: red;">Done List</span> 
+| Object                                                                                    | Specification                                                                                                                   |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| - starts to put everything together<br>under file (/cantera_example/adaptive_QSS_species) | - [Homo_ODE.py](cantera_example/adaptive_QSS_species): ODE eqns, solvers, integrators, Jacobian Calculator(parallel processing) |
+
+
+
+
