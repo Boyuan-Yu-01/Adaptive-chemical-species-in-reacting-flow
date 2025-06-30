@@ -258,9 +258,10 @@ Travel to China and Germany
 
 # July 1st
 ## <span style="color: red;">Done List</span> 
-| Object                                                                                    | Specification                                                                                                                   |
-| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| - starts to put everything together<br>under file (/cantera_example/adaptive_QSS_species) | - [Homo_ODE.py](cantera_example/adaptive_QSS_species): ODE eqns, solvers, integrators, Jacobian Calculator(parallel processing) |
+| Object                                                                                    | Specification                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| - starts to put everything together<br>under file (/cantera_example/adaptive_QSS_species) | - [Homo_ODE.py](cantera_example/adaptive_QSS_species/Homo_ODE.py): ODE eqns, solvers, integrators, Jacobian Calculator(parallel processing)<br>-[Homo_ODE_ver1.py](cantera_example/adaptive_QSS_species/Homo_ODE_ver1.py): all functions in the previous version + capable to switch off some species reaction<br>--[Homo_ODE_ver2.py](cantera_example/adaptive_QSS_species/Homo_ODE_ver2.py): all functions in the previous version + capable to switch off some species reaction. capable to switch off species using __INDEX instead of STRING__ of the species |
+
 
 
 
