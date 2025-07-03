@@ -92,7 +92,7 @@ class Homo_Reaction_ODE:
         # define the ODE solver
         
         # step 1: check if there are switch off species
-        if switch_off_species is None:
+        if switch_off_species is None or len(switch_off_species)==0:
             solver = scipy.integrate.ode(self.sys)
         else:
             # when there are switch off species, the ODE system needs to be redefined, s.t. the n.p.r. of the switch off species is zero. However, these new defined systems ARE NOT CLASS LEVEL ATTRIBUTES.
@@ -123,14 +123,29 @@ class Homo_Reaction_ODE:
                 
             elif self.reactor_type.lower() == "const_tp":
                 self.gas.TPY = solver.y[0], self.P, solver.y[1:]
+            
+            print(f"shape of states:{self.states.shape} \t shape of gas.states: {self.gas.state.shape}")    
             self.states.append(self.gas.state, t=solver.t)
-        
+            
         return self.states
 
+    def to_csv(self, filename):
+        """ Save the states to a csv file."""
+        concentrations = np.array(self.states.concentrations)
+        species_output = np.char.add(self.states.species_names, "[ kmol/m^3]")
+        titles = np.hstack((['t [s]', 'P [Pa]', 'T [K]', 'rho [kg/m^3]'], species_output))
+        t = np.array(self.states.t).reshape(-1,1)
+        P = np.array(self.states.P).reshape(-1, 1)
+        T = np.array(self.states.T).reshape(-1, 1)
+        rho = np.array(self.states.D).reshape(-1, 1)
+        data = np.hstack((t, P, T, rho, concentrations))
+        df = pd.DataFrame(data, columns=titles)
+        df.to_csv(filename, index=False)
+    
 ###############################################################
 ## calculate the importance matrix using parallel processing ##
 ###############################################################
-def importance_matrix(state0, state1, scheme, reactor_type, perturb_factor=1.01, num_cpu = mp.cpu_count()-1):
+def importance_matrix_calc(state0, state1, scheme, reactor_type, perturb_factor=1.01, num_cpu = mp.cpu_count()-1):
     """ Calculate the importance matrix using parallel processing."""
     
     size = np.array(state1.species_names).size   # size of m (number of species)
@@ -344,21 +359,32 @@ class Adaptive_Chemical_Reaction:
         scs = np.where(concentrations_1 <= self.concentration_threshold)[0]  # small concentration species
         
         # species that satisfies policy I
-        mu = state_1.net_production_rates / state_1.concentrations      # the reduced net production rates
+        # mu = state_1.net_production_rates / state_1.concentrations      # the reduced net production rates
+        with np.errstate(divide='ignore', invalid='ignore'):    # avoid division by zero
+            mu = np.divide(state_1.net_production_rates, state_1.concentrations)
+            mu = np.nan_to_num(mu, nan=0.0)
+
         candidates = np.where(np.abs(mu) <= self.epsilon / ((1-self.epsilon)*self.dt_max*self.step))[0]  # species that have the reduced net production rates no more than epsilon/[(1-epsilon)*dt*step)] 
         
         # check policy II
-        importance_matrix = importance_matrix(state_0, state_1, self.scheme, self.reactor_type, perturb_factor=1.01)
+        importance_matrix = importance_matrix_calc(state_0, state_1, self.scheme, self.reactor_type, perturb_factor=1.01)
+        
+        # print_importance_matrix(importance_matrix, state_1.species_names, state_1.species_names)
+        
         switch_off_species = np.concatenate((scs, candidates))
         reduced_importance_matrix = np.delete(importance_matrix, switch_off_species, axis=0)    # delete rows of the importance matrix that correspond to the switch off species
+        
+        # names_2 = np.delete(np.array(state_1.species_names), switch_off_species, axis=0)  # the names of the species that are not switched off
+        # print_importance_matrix(reduced_importance_matrix, state_1.species_names, names_2)  # print the importance matrix
+        
         switch_off_species = filter_indices_by_threshold(reduced_importance_matrix, switch_off_species, threshold=self.matrix_threshold)    # filter the switch off species based on the importance matrix
         
         scs = scs[np.isin(scs, switch_off_species)]
         scs_w = state_1.net_production_rates[scs]                       # the net production rates of the small concentration species
         candidates = candidates[np.isin(candidates, switch_off_species)]  # filter the candidates based on the importance matrix
         candidates_mu = mu[candidates]
-        
-        adapt_t_end = state_1.t[-1] + np.epsilon / ((1-np.epsilon)*np.max(np.abs(mu[switch_off_species])))  # given t_start (state_1.t)), we calculate the end time of this batch of adaptive reaction progress
+        # adapt_t_end = state_1.t[-1] + np.epsilon / ((1-np.epsilon)*np.max(np.abs(mu[switch_off_species])))  # given t_start (state_1.t)), we calculate the end time of this batch of adaptive reaction progress
+        adapt_t_end = 300 * self.dt_max + state_1.t
         
         return scs, scs_w, candidates, candidates_mu, adapt_t_end,     # return 1) small concentration species, 2) n.p.r. of small concentration species 3) policy I species, 4) reduced n.p.r. of policy I species, 5) adaptive end time
     
@@ -385,13 +411,19 @@ class Adaptive_Chemical_Reaction:
             if flag:
                 scs, scs_w, candidates, candidates_mu, adapt_t_end = self.decide_off_species(self.reactor_ODE.states[-2], self.reactor_ODE.states[-1])
                 switch_off_species = np.concatenate((scs, candidates))
-                print(f"Switch off species: {self.gas.species_names[switch_off_species]}")  # print the switch off species
+                if len(switch_off_species) ==0:
+                    print("no species to switch off.")
+                else:
+                    print(f"Switch off species: {self.gas.species_names[switch_off_species]}")  # print the switch off species
                 print(f"t_end of the batch: {adapt_t_end:.5e}")
-                self.reactor_ODE.reaction_progress(dt=self.dt_max, t_end=np.min(adapt_t_end, self.t_end-self.dt_max*2), t_start=self.reactor_ODE.states.t[-1], method='bdf', switch_off_species=switch_off_species)  # advance with the reduced model
+                self.reactor_ODE.reaction_progress(dt=self.dt_max, t_end=np.min([adapt_t_end, self.t_end-self.dt_max*2]), t_start=t_start_batch, switch_off_species=switch_off_species)  # advance with the reduced model
             else:
-                print(f"Switch off species: {self.gas.species_names[switch_off_species]}")  # print the switch off species
+                if len(switch_off_species) ==0:
+                    print("no species to switch off.")
+                else:
+                    print(f"Switch off species: {self.gas.species_names[switch_off_species]}")  # print the switch off species
                 print(f"t_end of the batch: {adapt_t_end:.5e}")
-                self.reactor_ODE.reaction_progress(dt=self.dt_max, t_end=np.min(adapt_t_end, self.t_end-self.dt_max*2), t_start=self.reactor_ODE.states.t[-1], method='bdf', switch_off_species=switch_off_species)  # advance with the reduced model
+                self.reactor_ODE.reaction_progress(dt=self.dt_max, t_end=np.min([adapt_t_end, self.t_end-self.dt_max*2]), t_start=t_start_batch, switch_off_species=switch_off_species)  # advance with the reduced model
             
             self.reactor_ODE.reaction_progress(dt=self.dt_max, t_end=self.reactor_ODE.states.t[-1] + self.dt_max*2, t_start=self.reactor_ODE.states.t[-1], method='bdf')
             
@@ -415,9 +447,21 @@ class Adaptive_Chemical_Reaction:
                 candidates_mu = np.delete(candidates_mu, candidates_idx)
                 while self.reactor_ODE.states.t[-1] > t_start_batch:    # remove this batch of states
                     self.reactor_ODE.states.pop()
+    
+    def to_csv(self, filename):
+        """ Save the states to a csv file."""
+        concentrations = np.array(self.reactor_ODE.states.concentrations)
+        species_output = np.char.add(self.reactor_ODE.states.species_names, "[ kmol/m^3]")
+        titles = np.hstack((['t [s]', 'P [Pa]', 'T [K]', 'rho [kg/m^3]'], species_output))
+        t = np.array(self.reactor_ODE.states.t).reshape(-1,1)
+        P = np.array(self.reactor_ODE.states.P).reshape(-1, 1)
+        T = np.array(self.reactor_ODE.states.T).reshape(-1, 1)
+        rho = np.array(self.reactor_ODE.states.D).reshape(-1, 1)
+        data = np.hstack((t, P, T, rho, concentrations))
+        df = pd.DataFrame(data, columns=titles)
+        df.to_csv(filename, index=False)
             
-    
-    
+
     
     
     

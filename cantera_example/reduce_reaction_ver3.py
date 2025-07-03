@@ -5,13 +5,11 @@ import pandas as pd
 import multiprocessing as mp
 
 class Homo_Reaction:
-    def __init__(self, scheme, gas, dt_max, t_end, t_start=0.0, mode=None, csv_output=None, output_species=[]):
+    def __init__(self, scheme, gas, dt_max, t_start=0.0, mode=None, csv_output=None, output_species=[]):
         # define reaction related class level parameters
         self.gas = gas
         self.scheme = scheme
         self.dt_max = dt_max
-        self.t_start = t_start
-        self.t_end = t_end
         self.mode = mode
         self.csv_name = csv_output
         self.output_species = output_species
@@ -65,7 +63,7 @@ class Homo_Reaction:
         dYdt = wdot * self.gas.molecular_weights / rho
         return np.hstack((dTdt, dYdt))
     
-    def reaction_progress(self, dt, t_end, t_start=0.0, method='bdf',energy='on'):
+    def reaction_progress(self, dt, t_end, t_start=0.0, method='bdf'):
         """Integrate the ODE system from t_start to t_end with time step dt
            Choose reactor type: 'const_V' or 'const_P'
            """
@@ -130,7 +128,17 @@ class Homo_Reaction:
         # reaction progress:
         self.reaction_progress(dt=dt_max, t_end=t_end, t_start=t_start, method='bdf')     
             
-        
+    def to_csv(self, filename):
+        concentrations = np.array(self.states.concentrations)
+        species_output = np.char.add(self.states.species_names, "[ kmol/m^3]")
+        titles = np.hstack((['t [s]', 'P [Pa]', 'T [K]', 'rho [kg/m^3]'], species_output))
+        t = np.array(self.states.t).reshape(-1,1)
+        P = np.array(self.states.P).reshape(-1, 1)
+        T = np.array(self.states.T).reshape(-1, 1)
+        rho = np.array(self.states.D).reshape(-1, 1)
+        data = np.hstack((t, P, T, rho, concentrations))
+        df = pd.DataFrame(data, columns=titles)
+        df.to_csv(filename, index=False)
     
 def importance_matrix_parallel(state0, state1, scheme, mode, perturb_factor=1.01, num_cpu=mp.cpu_count()-1):
     """This function evaluats and returns the importance matrix"""
