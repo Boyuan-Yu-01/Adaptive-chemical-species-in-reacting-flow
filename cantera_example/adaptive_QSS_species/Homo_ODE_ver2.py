@@ -124,7 +124,6 @@ class Homo_Reaction_ODE:
             elif self.reactor_type.lower() == "const_tp":
                 self.gas.TPY = solver.y[0], self.P, solver.y[1:]
             
-            print(f"shape of states:{self.states.shape} \t shape of gas.states: {self.gas.state.shape}")    
             self.states.append(self.gas.state, t=solver.t)
             
         return self.states
@@ -339,7 +338,7 @@ class Adaptive_Chemical_Reaction:
                     monitored_sum = A[:, col_indices].sum(axis=1)
                     
                     # Compute the condition: monitored_sum must be > threshold * total
-                    valid = monitored_sum > threshold * total_row_sum
+                    valid = monitored_sum <= threshold * total_row_sum
                     
                     if np.all(valid):
                         break  # All rows satisfy the condition
@@ -359,7 +358,6 @@ class Adaptive_Chemical_Reaction:
         scs = np.where(concentrations_1 <= self.concentration_threshold)[0]  # small concentration species
         
         # species that satisfies policy I
-        # mu = state_1.net_production_rates / state_1.concentrations      # the reduced net production rates
         with np.errstate(divide='ignore', invalid='ignore'):    # avoid division by zero
             mu = np.divide(state_1.net_production_rates, state_1.concentrations)
             mu = np.nan_to_num(mu, nan=0.0)
@@ -368,24 +366,19 @@ class Adaptive_Chemical_Reaction:
         
         # check policy II
         importance_matrix = importance_matrix_calc(state_0, state_1, self.scheme, self.reactor_type, perturb_factor=1.01)
-        
-        # print_importance_matrix(importance_matrix, state_1.species_names, state_1.species_names)
-        
-        switch_off_species = np.concatenate((scs, candidates))
+        switch_off_species = np.unique(np.concatenate((scs, candidates)))
         reduced_importance_matrix = np.delete(importance_matrix, switch_off_species, axis=0)    # delete rows of the importance matrix that correspond to the switch off species
-        
-        # names_2 = np.delete(np.array(state_1.species_names), switch_off_species, axis=0)  # the names of the species that are not switched off
-        # print_importance_matrix(reduced_importance_matrix, state_1.species_names, names_2)  # print the importance matrix
-        
         switch_off_species = filter_indices_by_threshold(reduced_importance_matrix, switch_off_species, threshold=self.matrix_threshold)    # filter the switch off species based on the importance matrix
-        
         scs = scs[np.isin(scs, switch_off_species)]
         scs_w = state_1.net_production_rates[scs]                       # the net production rates of the small concentration species
         candidates = candidates[np.isin(candidates, switch_off_species)]  # filter the candidates based on the importance matrix
         candidates_mu = mu[candidates]
-        # adapt_t_end = state_1.t[-1] + np.epsilon / ((1-np.epsilon)*np.max(np.abs(mu[switch_off_species])))  # given t_start (state_1.t)), we calculate the end time of this batch of adaptive reaction progress
-        adapt_t_end = 300 * self.dt_max + state_1.t
+        # if len(candidates) != 0:
+        #     adapt_t_end = state_1.t + self.epsilon / ((1-self.epsilon)*np.max(np.abs(mu[candidates])))  # given t_start (state_1.t)), we calculate the end time of this batch of adaptive reaction progress
+        # else:
+        #     adapt_t_end = state_1.t + 300 * self.dt_max  # if no switch off species, we set the end time to be t_start + 300 * dt_max, which is a default value.
         
+        adapt_t_end = state_1.t + 300 * self.dt_max
         return scs, scs_w, candidates, candidates_mu, adapt_t_end,     # return 1) small concentration species, 2) n.p.r. of small concentration species 3) policy I species, 4) reduced n.p.r. of policy I species, 5) adaptive end time
     
     def adaptive_reaction_progress(self):
