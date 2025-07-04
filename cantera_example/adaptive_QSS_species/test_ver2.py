@@ -1,5 +1,4 @@
 from Homo_ODE_ver2 import *
-# from ver2_test import *
 
 ##########################################################
 ## This is a test file to test functions and classes in ##
@@ -93,3 +92,6 @@ for idx in idxs:
     print("The end time is {:.2e}s".format(adapt_t_end1))
     print("------------------------------------------------------------")
 
+##########################################################
+## Test 5: test the adaptive_reaction_progress -------- ##
+##########################################################

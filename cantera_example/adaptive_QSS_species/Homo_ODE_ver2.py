@@ -457,5 +457,3 @@ class Adaptive_Chemical_Reaction:
 
     
     
-    
-    

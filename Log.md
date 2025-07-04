@@ -264,9 +264,10 @@ Travel to China and Germany
 
 # July 7th
 ## <span style="color: red;">Done List</span> 
-| Object                           | Specification                                                                                                                                                                           |
-| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - validating the adaptive method | - [testing script](cantera_example/adaptive_QSS_species/test_ver2.py)<br>- validating species selecting system using full model [plot](cantera_example/adaptive_QSS_species/test_4.png) |
+| Object                                                                                       | Specification                                                                                                                                                                           |
+| -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - validating the adaptive method                                                             | - [testing script](cantera_example/adaptive_QSS_species/test_ver2.py)<br>- validating species selecting system using full model [plot](cantera_example/adaptive_QSS_species/test_4.png) |
+| update Homo_ODE to [Homo_ODE_ver3.py](cantera_example/adaptive_QSS_species/Homo_ODE_ver3.py) | - Combining __class__ *Homo_Reaction_ODE* and __class__ *Adaptive_chemical_Reaction* into a single __class__ *Homo_Reaction*                                                            |
 
 
 
