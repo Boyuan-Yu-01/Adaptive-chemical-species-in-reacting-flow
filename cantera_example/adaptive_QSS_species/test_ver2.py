@@ -5,7 +5,7 @@ from Homo_ODE_ver2 import *
 ## script "Homo_ODE_ver2.py"--------------------------- ##
 ##########################################################
 
-##########################################################
+###########################################################
 ## Test 1: run full model reaction using---------------- ## 
 ## 'Homo_Reaction_ODE'---------------------------------- ##
 ###########################################################
@@ -73,9 +73,9 @@ t_end = 5e-5
 ## 1) switch off species ------------------------------ ##
 ## 2) how long will it last -(constrain to 300) ------- ##
 ##########################################################
-obj4 = Adaptive_Chemical_Reaction(gas, scheme, t_end, dt_max, reactor_type, epsilon=0.1, matrix_threshold=0.1, concentration_threshold=1e-7)
-obj4.reactor_ODE.reaction_progress(dt=dt_max, t_end=t_end)
-idxs = [0, 500, 1000, 1500, 2000, 3000, 4000]
+# obj4 = Adaptive_Chemical_Reaction(gas, scheme, t_end, dt_max, reactor_type, epsilon=0.1, matrix_threshold=0.1, concentration_threshold=1e-7)
+# obj4.reactor_ODE.reaction_progress(dt=dt_max, t_end=t_end)
+# idxs = [0, 500, 1000, 1500, 2000, 3000, 4000]
 
 def species_idx_reader(states, species_idxs):
     """
@@ -83,14 +83,14 @@ def species_idx_reader(states, species_idxs):
     """
     return [states.species_names[idx] for idx in species_idxs]
 
-for idx in idxs:
-    print(f"The index is {idx}")
-    scs1, scs_w1, candidates1, candidates_mu1, adapt_t_end1 = obj4.decide_off_species(obj4.reactor_ODE.states[idx], obj4.reactor_ODE.states[idx+1])
-    print("Small concentration species:", species_idx_reader(obj4.reactor_ODE.states, scs1))
-    print("Candidate species:", species_idx_reader(obj4.reactor_ODE.states,candidates1))
-    print("The start time is {:.2e}s".format(obj4.reactor_ODE.states[idx].t))
-    print("The end time is {:.2e}s".format(adapt_t_end1))
-    print("------------------------------------------------------------")
+# for idx in idxs:
+#     print(f"The index is {idx}")
+#     scs1, scs_w1, candidates1, candidates_mu1, adapt_t_end1 = obj4.decide_off_species(obj4.reactor_ODE.states[idx], obj4.reactor_ODE.states[idx+1])
+#     print("Small concentration species:", species_idx_reader(obj4.reactor_ODE.states, scs1))
+#     print("Candidate species:", species_idx_reader(obj4.reactor_ODE.states,candidates1))
+#     print("The start time is {:.2e}s".format(obj4.reactor_ODE.states[idx].t))
+#     print("The end time is {:.2e}s".format(adapt_t_end1))
+#     print("------------------------------------------------------------")
 
 ##########################################################
 ## Test 5: test the adaptive_reaction_progress -------- ##

@@ -264,10 +264,11 @@ Travel to China and Germany
 
 # July 7th
 ## <span style="color: red;">Done List</span> 
-| Object                                                                                       | Specification                                                                                                                                                                           |
-| -------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| - validating the adaptive method                                                             | - [testing script](cantera_example/adaptive_QSS_species/test_ver2.py)<br>- validating species selecting system using full model [plot](cantera_example/adaptive_QSS_species/test_4.png) |
-| update Homo_ODE to [Homo_ODE_ver3.py](cantera_example/adaptive_QSS_species/Homo_ODE_ver3.py) | - Combining __class__ *Homo_Reaction_ODE* and __class__ *Adaptive_chemical_Reaction* into a single __class__ *Homo_Reaction*                                                            |
+| Object                                                                                       | Specification                                                                                                                                                                                                           |
+| -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| - validating the adaptive method                                                             | - [testing script](cantera_example/adaptive_QSS_species/test_ver2.py)<br>- validating species selecting system using full model [plot](cantera_example/adaptive_QSS_species/test_4.png)                                 |
+| update Homo_ODE to [Homo_ODE_ver3.py](cantera_example/adaptive_QSS_species/Homo_ODE_ver3.py) | - Combining __class__ *Homo_Reaction_ODE* and __class__ *Adaptive_chemical_Reaction* into a single __class__ *Homo_Reaction*                                                                                            |
+| First test result                                                                            | T = 2000 K, P = 1 atm, CH4, O2, stoichiometric, constant pressure<br>- [plot 1](cantera_example/adaptive_QSS_species/test_result/graph3.pdf)<br>- [plot 2](cantera_example/adaptive_QSS_species/test_result/graph4.pdf) |
 
 
 

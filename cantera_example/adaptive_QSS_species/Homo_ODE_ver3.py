@@ -14,12 +14,11 @@ class Homo_Reactor:
             adaptive_reaction_progress: switch off some species in some batch
             write_to_csv:               output t, P, T, rho, and species concentration into a csv file
     """
-    def __init__(self, gas, reactor_type, scheme, dt, epsilon=0.1, step=300, concentration_threshold=1e-7, matrix_threshold=0.1, tol=0.1):
+    def __init__(self, gas, reactor_type, scheme, epsilon=0.1, step=300, concentration_threshold=1e-7, matrix_threshold=0.1, tol=0.1):
         self.gas = gas
         self.states = []
         self.reactor_type = reactor_type
         self.scheme = scheme
-        self.dt = dt
         self.epsilon=epsilon
         self.step = step
         self.concentration_threshold = concentration_threshold
@@ -46,7 +45,7 @@ class Homo_Reactor:
         
         # reaction equations:
         wdot = self.gas.net_production_rates
-        if switch_off_species is not None and len(switch_off_species) > 0:
+        if switch_off_species is not None and len(switch_off_species)>0:
             wdot[switch_off_species] = 0  # handle switch off species: when there are switch off species, the n.p.r. of these species is set to be zero.
         
         dTdt = - (np.dot(self.gas.partial_molar_int_energies, wdot) /
@@ -64,7 +63,7 @@ class Homo_Reactor:
         
         # reaction equations:
         wdot = self.gas.net_production_rates
-        if switch_off_species is not None: # handle switch off species: when there are switch off species, the n.p.r. of these species is set to be zero.
+        if switch_off_species is not None and len(switch_off_species)>0: # handle switch off species: when there are switch off species, the n.p.r. of these species is set to be zero.
             wdot[switch_off_species] = 0
             
         if energy.lower()=="off":
@@ -119,7 +118,7 @@ class Homo_Reactor:
             
         return self.states
     
-    def decide_off_species(self, state_0, state_1):
+    def decide_off_species(self, state_0, state_1, dt):
         """
         Determine species to be switched off based on two adaptive filtering policies:
         (I) a concentration threshold and (II) their relative contribution to system dynamics.
@@ -217,7 +216,7 @@ class Homo_Reactor:
             mu = np.divide(state_1.net_production_rates, state_1.concentrations)
             mu = np.nan_to_num(mu, nan=0.0)
 
-        candidates = np.where(np.abs(mu) <= self.epsilon / ((1-self.epsilon)*self.dt*self.step))[0]  # species that have the reduced net production rates no more than epsilon/[(1-epsilon)*dt*step)] 
+        candidates = np.where(np.abs(mu) <= self.epsilon / ((1-self.epsilon)*dt*self.step))[0]  # species that have the reduced net production rates no more than epsilon/[(1-epsilon)*dt*step)] 
         
         # check policy II
         importance_matrix = importance_matrix_calc(state_0, state_1, self.scheme, self.reactor_type, perturb_factor=1.01)
@@ -225,16 +224,82 @@ class Homo_Reactor:
         reduced_importance_matrix = np.delete(importance_matrix, switch_off_species, axis=0)    # delete rows of the importance matrix that correspond to the switch off species
         switch_off_species = filter_indices_by_threshold(reduced_importance_matrix, switch_off_species, threshold=self.matrix_threshold)    # filter the switch off species based on the importance matrix
         scs = scs[np.isin(scs, switch_off_species)]
-        scs_w = state_1.net_production_rates[scs]                       # the net production rates of the small concentration species
-        candidates = candidates[np.isin(candidates, switch_off_species)]  # filter the candidates based on the importance matrix
+        scs = scs[~np.isin(scs, candidates)]                                # remove species that are already in candidates from scs
+        scs_w = state_1.net_production_rates[scs]                           # the net production rates of the small concentration species
+        candidates = candidates[np.isin(candidates, switch_off_species)]    # filter the candidates based on the importance matrix
         candidates_mu = mu[candidates]
         # if len(candidates) != 0:
         #     adapt_t_end = state_1.t + self.epsilon / ((1-self.epsilon)*np.max(np.abs(mu[candidates])))  # given t_start (state_1.t)), we calculate the end time of this batch of adaptive reaction progress
         # else:
-        #     adapt_t_end = state_1.t + 300 * self.dt  # if no switch off species, we set the end time to be t_start + 300 * dt, which is a default value.
+        #     adapt_t_end = state_1.t + 300 * dt  # if no switch off species, we set the end time to be t_start + 300 * dt, which is a default value.
         
-        adapt_t_end = state_1.t + 300 * self.dt
+        adapt_t_end = state_1.t + 300 * dt
         return scs, scs_w, candidates, candidates_mu, adapt_t_end,     # return 1) small concentration species, 2) n.p.r. of small concentration species 3) policy I species, 4) reduced n.p.r. of policy I species, 5) adaptive end time
+    
+    def adaptive_reaction_progress(self, dt, t_end, t_start=0.0):
+        """Perform adaptive reaction progress by switching off species based on the adaptive filtering policies."""
+        def species_idx_reader(states, species_idxs):
+            """Given a list of species indexes, return the species names"""
+            return [states.species_names[idx] for idx in species_idxs]
+        ## advance the reaction by two steps
+        self.reaction_progress(dt=dt, t_end=t_start+dt*2, t_start=t_start)
+        
+        ## initialise parameters for the while loop
+        flag = True
+        scs = []
+        scs_w = []
+        candidates = []
+        candidates_mu = []
+        switch_off_species = []
+        
+        ## while loop to perform batches of adaptive reaction progress
+        while self.states.t[-1] < t_end-2*dt:
+            t_start_batch = self.states.t[-1]  # the start time of the batch
+            print(f"t_start of the batch: {t_start_batch:.3e}")
+            if flag:  # need to evaluate the switch off species for a new batch
+                scs, scs_w, candidates, candidates_mu, adapt_t_end = self.decide_off_species(self.states[-2], self.states[-1], dt)
+                switch_off_species = np.concatenate((scs, candidates))  # switch off species are the union of small concentration species and candidates
+                print("switched off species:", species_idx_reader(self.states, switch_off_species))
+                self.reaction_progress(dt=dt, t_end=np.min([adapt_t_end, t_end-dt*2]), t_start=t_start_batch, switch_off_species=switch_off_species)
+            else:     # the previous evaluation of the switch off species is modified
+                print("switched off species:", species_idx_reader(self.states, switch_off_species))
+                self.reaction_progress(dt=dt, t_end=np.min([adapt_t_end, t_end-dt*2]), t_start=t_start_batch, switch_off_species=switch_off_species)
+            
+            ## advance the reaction by two steps, evaluate the switch off species. See if it needs to go back and re-evaluate or go to the next batch
+            self.reaction_progress(dt=dt, t_end=self.states.t[-1]+dt*2, t_start=self.states.t[-1])
+            scs_w_current = self.states[-1].net_production_rates[scs]
+            with np.errstate(divide='ignore', invalid='ignore'):    # avoid division by zero
+                candidates_mu_current = np.divide(self.states[-1].net_production_rates, self.states[-1].concentrations)
+                candidates_mu_current = np.nan_to_num(candidates_mu_current, nan=0.0)
+            # check if the small concentration species and candidates are still valid
+            mask_scs = np.abs(scs_w_current) > 10*np.abs(scs_w)
+            scs_remove = np.where(mask_scs)[0]
+            mask_candidates = np.abs(candidates_mu_current[candidates]) > 10*np.abs(candidates_mu)
+            candidates_remove = np.where(mask_candidates)[0]
+            if len(scs_remove) > 0 or len(candidates_remove) > 0:
+                flag = False
+                scs = np.delete(scs, scs_remove)
+                scs_w = np.delete(scs_w, scs_remove)
+                candidates = np.delete(candidates, candidates_remove)
+                candidates_mu = np.delete(candidates_mu, candidates_remove)
+                while self.states.t[-1] > t_start_batch:
+                    self.states = self.states[:-1]  # remove the last state, which is not valid anymore
+        ## after the while loop, if self.states.t[-1]  t_end, advance the reaction to t_end
+        if self.states.t[-1] < t_end:
+            self.reaction_progress(dt=dt, t_end=t_end, t_start=self.states.t[-1])
+    
+    def to_csv(self, filename):
+        """ Save the states to a csv file."""
+        concentrations = np.array(self.states.concentrations)
+        species_output = np.char.add(self.states.species_names, "[ kmol/m^3]")
+        titles = np.hstack((['t [s]', 'P [Pa]', 'T [K]', 'rho [kg/m^3]'], species_output))
+        t = np.array(self.states.t).reshape(-1,1)
+        P = np.array(self.states.P).reshape(-1, 1)
+        T = np.array(self.states.T).reshape(-1, 1)
+        rho = np.array(self.states.D).reshape(-1, 1)
+        data = np.hstack((t, P, T, rho, concentrations))
+        df = pd.DataFrame(data, columns=titles)
+        df.to_csv(filename, index=False)
     
 def importance_matrix_calc(state0, state1, scheme, reactor_type, perturb_factor=1.01, num_cpu = mp.cpu_count()-1):
     """ Calculate the importance matrix using parallel processing."""
