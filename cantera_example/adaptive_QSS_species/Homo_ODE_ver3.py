@@ -14,7 +14,7 @@ class Homo_Reactor:
             adaptive_reaction_progress: switch off some species in some batch
             write_to_csv:               output t, P, T, rho, and species concentration into a csv file
     """
-    def __init__(self, gas, reactor_type, scheme, epsilon=0.1, step=300, concentration_threshold=1e-7, matrix_threshold=0.1, tol=0.1):
+    def __init__(self, gas, reactor_type, scheme, epsilon=0.1, step=300, concentration_threshold=1e-7, matrix_threshold=0.1):
         self.gas = gas
         self.states = []
         self.reactor_type = reactor_type
@@ -23,7 +23,6 @@ class Homo_Reactor:
         self.step = step
         self.concentration_threshold = concentration_threshold
         self.matrix_threshold = matrix_threshold
-        # self.tol = tol
         
         if self.reactor_type.lower() == "const_v":
             self.sys = lambda t,y: self.const_V_ODE(t, y)
