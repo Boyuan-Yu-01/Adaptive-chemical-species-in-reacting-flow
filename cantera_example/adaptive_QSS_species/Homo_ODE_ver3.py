@@ -23,7 +23,7 @@ class Homo_Reactor:
         self.step = step
         self.concentration_threshold = concentration_threshold
         self.matrix_threshold = matrix_threshold
-        self.tol = tol
+        # self.tol = tol
         
         if self.reactor_type.lower() == "const_v":
             self.sys = lambda t,y: self.const_V_ODE(t, y)
@@ -255,26 +255,31 @@ class Homo_Reactor:
         ## while loop to perform batches of adaptive reaction progress
         while self.states.t[-1] < t_end-2*dt:
             t_start_batch = self.states.t[-1]  # the start time of the batch
-            print(f"t_start of the batch: {t_start_batch:.3e}")
+            print("t_start_batch:", t_start_batch)
             if flag:  # need to evaluate the switch off species for a new batch
                 scs, scs_w, candidates, candidates_mu, adapt_t_end = self.decide_off_species(self.states[-2], self.states[-1], dt)
                 switch_off_species = np.concatenate((scs, candidates))  # switch off species are the union of small concentration species and candidates
-                print("switched off species:", species_idx_reader(self.states, switch_off_species))
+                print("start new batch, switch off species:", switch_off_species.shape)
                 self.reaction_progress(dt=dt, t_end=np.min([adapt_t_end, t_end-dt*2]), t_start=t_start_batch, switch_off_species=switch_off_species)
             else:     # the previous evaluation of the switch off species is modified
-                print("switched off species:", species_idx_reader(self.states, switch_off_species))
+                print("modified batch, switch off species:", switch_off_species.shape)
+                switch_off_species = np.concatenate((scs, candidates))  # switch off species are the union of small concentration species and candidates
                 self.reaction_progress(dt=dt, t_end=np.min([adapt_t_end, t_end-dt*2]), t_start=t_start_batch, switch_off_species=switch_off_species)
+            
+            print("t_end_batch", self.states.t[-1])
             
             ## advance the reaction by two steps, evaluate the switch off species. See if it needs to go back and re-evaluate or go to the next batch
             self.reaction_progress(dt=dt, t_end=self.states.t[-1]+dt*2, t_start=self.states.t[-1])
             scs_w_current = self.states[-1].net_production_rates[scs]
             with np.errstate(divide='ignore', invalid='ignore'):    # avoid division by zero
-                candidates_mu_current = np.divide(self.states[-1].net_production_rates, self.states[-1].concentrations)
+                candidates_mu_current = np.divide(self.states[-1].net_production_rates[candidates], self.states[-1].concentrations[candidates])
                 candidates_mu_current = np.nan_to_num(candidates_mu_current, nan=0.0)
+            
+            # candidates_mu_current = candidates_mu_current[candidates]  # only keep the candidates' n.p.r.
             # check if the small concentration species and candidates are still valid
             mask_scs = np.abs(scs_w_current) > 10*np.abs(scs_w)
             scs_remove = np.where(mask_scs)[0]
-            mask_candidates = np.abs(candidates_mu_current[candidates]) > 10*np.abs(candidates_mu)
+            mask_candidates = np.abs(candidates_mu_current) > 10*np.abs(candidates_mu)
             candidates_remove = np.where(mask_candidates)[0]
             if len(scs_remove) > 0 or len(candidates_remove) > 0:
                 flag = False
@@ -284,6 +289,13 @@ class Homo_Reactor:
                 candidates_mu = np.delete(candidates_mu, candidates_remove)
                 while self.states.t[-1] > t_start_batch:
                     self.states = self.states[:-1]  # remove the last state, which is not valid anymore
+            else:
+                flag = True
+                scs = []
+                scs_w = []
+                candidates = []
+                candidates_mu = []
+                switch_off_species = []
         ## after the while loop, if self.states.t[-1]  t_end, advance the reaction to t_end
         if self.states.t[-1] < t_end:
             self.reaction_progress(dt=dt, t_end=t_end, t_start=self.states.t[-1])
