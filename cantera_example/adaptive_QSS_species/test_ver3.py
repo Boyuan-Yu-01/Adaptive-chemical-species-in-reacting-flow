@@ -7,9 +7,9 @@ from Homo_ODE_ver3 import *
 
 scheme = "FFCM2.yaml"
 gas = ct.Solution(scheme)
-T = 1500
+T = 2000
 P = 1 * ct.one_atm
-X = "CH4:1.2, O2:2"
+X = "CH4:0.7, O2:2"
 gas.TPX = T, P, X
 reactor_type = "const_P"
 
@@ -45,10 +45,10 @@ t_end = 5e-5
 ##########################################################
 ## Test 2: run the system ----------------------------- ## 
 ##########################################################
-obj2 = Homo_Reactor(gas, reactor_type, scheme, epsilon=0.05)
+obj2 = Homo_Reactor(gas, reactor_type, scheme, epsilon=0.01)
 obj2.adaptive_reaction_progress(dt_max, t_end=t_end)
 # obj2.reaction_progress(dt=dt_max,t_end=t_end)
-obj2.to_csv("2_1.csv")
+obj2.to_csv("randm.csv")
 
 # obj3 = Homo_Reactor(gas, reactor_type, scheme)
 # obj3.adaptive_reaction_progress(dt_max, t_end=t_end)

@@ -271,8 +271,3 @@ Travel to China and Germany
 | First test result                                                                            | T = 2000 K, P = 1 atm, CH4, O2, stoichiometric, constant pressure                                                                                                                          |
 | test results                                                                                 | - [summary file](cantera_example/adaptive_QSS_species/README.md)                                                                                                                           |
 | How should we tell the story?                                                                | - Idea of Jacobian: time step matching (when steady state can be assumed for few hundred/thousand steps)<br>- Steady State Assumption<br>- Justify using Jacobian: (deeply modify cantera) |
-
-
-
-
-
